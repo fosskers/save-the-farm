@@ -2,7 +2,7 @@
  (:class qlot/source/dist:source-dist
   :initargs (:distribution "https://beta.quicklisp.org/dist/quicklisp.txt" :%version :latest)
   :version "2023-10-21"))
-("ultralisp" .
+("shirakumo" .
  (:class qlot/source/dist:source-dist
-  :initargs (:distribution "https://dist.ultralisp.org/" :%version :latest)
-  :version "20240815150500"))
+  :initargs (:distribution "https://dist.shirakumo.org/shirakumo.txt" :%version :latest)
+  :version "2024.08.16-07.28.33"))
