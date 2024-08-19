@@ -50,6 +50,12 @@
                               :velocity (nv* (q* (orientation my-cube) +vx3+) 5))
                (container my-cube)))))
 
+(define-handler (my-cube gamepad-press) (button)
+  (format t "Button: ~a, Type: ~a~%" button (type-of button)))
+
+#+nil
+(find-class 'gamepad-press)
+
 (define-handler (my-cube shoot) ()
   (enter (make-instance 'bullet
                         :location (location my-cube)
