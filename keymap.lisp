@@ -5,3 +5,6 @@
 (trigger hide
          (button :one-of (:a))
          (key :one-of (:space)))
+
+(trigger shoot
+         (key :one-of (:f)))

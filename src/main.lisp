@@ -18,11 +18,36 @@
 (define-action-set in-game)
 (define-action move (directional-action in-game))
 (define-action hide (in-game))
+(define-action shoot (in-game))
+
+(define-shader-entity bullet (vertex-entity colored-entity transformed-entity listener)
+  ((vertex-array :initform (// 'trial 'unit-sphere))
+   (color :initform (vec 1 0 0 1))
+   (velocity :initform (vec 0 0 0) :initarg :velocity :accessor velocity)))
+
+(define-handler (bullet tick) (dt)
+  (nv+* (location bullet) (velocity bullet) dt))
 
 (define-shader-entity my-cube (vertex-entity colored-entity textured-entity transformed-entity listener)
   ((vertex-array :initform (// 'trial 'unit-cube))
    (texture :initform (// 'trial 'cat))
    (color :initform (vec 1 1 1 1))))
+
+#+nil
+(define-handler (my-cube key-press) (key)
+  (case key
+    (:f (enter (make-instance 'bullet
+                              :location (location my-cube)
+                              :scaling (vec 0.1 0.1 0.1)
+                              :velocity (nv* (q* (orientation my-cube) +vx3+) 5))
+               (container my-cube)))))
+
+(define-handler (my-cube shoot) ()
+  (enter (make-instance 'bullet
+                        :location (location my-cube)
+                        :scaling (vec 0.1 0.1 0.1)
+                        :velocity (nv* (q* (orientation my-cube) +vx3+) 5))
+         (container my-cube)))
 
 (define-handler (my-cube hide) ()
   (setf (vw (color my-cube)) (if (= (vw (color my-cube)) 1.0) 0.1 1.0)))
@@ -37,7 +62,10 @@
 (defmethod setup-scene ((main main) scene)
   (enter (make-instance 'my-cube) scene)
   (enter (make-instance '3d-camera :location (vec 0 0 -3)) scene)
-  (enter (make-instance 'render-pass) scene))
+  (enter (make-instance 'render-pass) scene)
+  ;; Doesn't atually add a bullet to the scene graph, but does everything else
+  ;; necessary to prepare this entity to be eventually loaded later.
+  (preload (make-instance 'bullet) scene))
 
 (defun launch (&rest args)
   "Convenience function for launching the game. Also possible to do any other
@@ -57,3 +85,7 @@
 
 #+nil
 (maybe-reload-scene)
+
+;; Dynamically reload the Keymap.
+#+nil
+(load-mapping #p"keymap.lisp")
