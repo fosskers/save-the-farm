@@ -11,6 +11,14 @@
 (defclass main (trial:main)
   ())
 
+;; `base' is somewhat sensitive. If you give it an absolute path it'll believe
+;; it as is, but relative paths seem to be dead-set on staying within `src/' and
+;; don't result in paths relative to the project root.
+(define-pool farm :base #p"/home/colin/code/common-lisp/save-the-farm/data/")
+
+(define-asset (farm jack) image
+    #p"jack.jpg")
+
 (define-asset (trial cat) image
     #p"cat.png")
 
@@ -30,7 +38,7 @@
 
 (define-shader-entity my-cube (vertex-entity colored-entity textured-entity transformed-entity listener)
   ((vertex-array :initform (// 'trial 'unit-cube))
-   (texture :initform (// 'trial 'cat))
+   (texture :initform (// 'farm 'jack))
    (color :initform (vec 1 1 1 1))))
 
 #+nil
@@ -86,6 +94,8 @@
 #+nil
 (maybe-reload-scene)
 
-;; Dynamically reload the Keymap.
+;; Dynamically reload the Keymap and make sure the global one is resaved, or
+;; else local changes won't be reapplied on subsequent launches.
 #+nil
-(load-mapping #p"keymap.lisp")
+(let ((*package* #.*package*))
+  (load-keymap :reset t))
