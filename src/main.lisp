@@ -1,7 +1,8 @@
 (defpackage save-the-farm
-  (:use :cl+trial)
+  (:use :cl+trial :arrow-macros)
   (:shadow :main :launch)
-  (:local-nicknames (:v :org.shirakumo.verbose))
+  (:local-nicknames (:v :org.shirakumo.verbose)
+                    (:gamepad :org.shirakumo.fraf.gamepad))
   (:export :main :launch))
 
 (in-package :save-the-farm)
@@ -52,6 +53,9 @@
 
 (define-handler (my-cube gamepad-press) (button)
   (format t "Button: ~a, Type: ~a~%" button (type-of button)))
+
+(define-handler (my-cube gamepad-move) ()
+  (format t "Movement: ~a~%" gamepad-move))
 
 #+nil
 (find-class 'gamepad-press)
@@ -105,3 +109,13 @@
 #+nil
 (let ((*package* #.*package*))
   (load-keymap :reset t))
+
+;; --- Controller Experiments --- ;;
+
+;; 2024-08-21 06:47:41 [INFO ] <TRIAL.INPUT>: Detected the following controllers:
+;;   Vendor: 2079 Product: 58369 Version: 272 Driver: EVDEV Name: USB gamepad
+
+#+nil
+(->> (gamepad:list-devices)
+  (car))
+;; (gamepad:configure-device))

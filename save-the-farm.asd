@@ -3,7 +3,8 @@
   :depends-on (:trial
                :trial-glfw
                :trial-png
-               :trial-jpeg)
+               :trial-jpeg
+               :arrow-macros)
   :components ((:module "src"
                 :components
                 ((:file "main")))))
