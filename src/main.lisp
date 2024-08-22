@@ -2,14 +2,16 @@
   (:use :cl+trial :arrow-macros)
   (:shadow :main :launch)
   (:local-nicknames (:v :org.shirakumo.verbose)
-                    (:gamepad :org.shirakumo.fraf.gamepad))
+                    (:gamepad :org.shirakumo.fraf.gamepad)
+                    (:harmony :org.shirakumo.fraf.harmony)
+                    (:trial-harmony :org.shirakumo.fraf.trial.harmony))
   (:export :main :launch))
 
 (in-package :save-the-farm)
 
 (setf +app-system+ "save-the-farm")
 
-(defclass main (trial:main)
+(defclass stf-main (trial-harmony:settings-main trial:main)
   ())
 
 ;; `base' is somewhat sensitive. If you give it an absolute path it'll believe
@@ -20,6 +22,16 @@
 (define-asset (farm jack) image
     #p"jack.jpg")
 
+(define-asset (farm meow) trial-harmony:sound
+    #p"meow.mp3")
+
+#+nil
+(find-class 'trial-harmony:sound)
+
+(defmethod stage :after ((jack my-cube) (area staging-area))
+  (stage (// 'farm 'meow) area))
+
+#+nil
 (define-asset (trial cat) image
     #p"cat.png")
 
@@ -51,14 +63,13 @@
                               :velocity (nv* (q* (orientation my-cube) +vx3+) 5))
                (container my-cube)))))
 
+#+nil
 (define-handler (my-cube gamepad-press) (button)
-  (format t "Button: ~a, Type: ~a~%" button (type-of button)))
-
-(define-handler (my-cube gamepad-move) ()
-  (format t "Movement: ~a~%" gamepad-move))
+  (v:info :stf "Button: ~a, Type: ~a" button (type-of button)))
 
 #+nil
-(find-class 'gamepad-press)
+(define-handler (my-cube gamepad-move) ()
+  (format t "Movement: ~a~%" gamepad-move))
 
 (define-handler (my-cube shoot) ()
   (enter (make-instance 'bullet
@@ -68,7 +79,8 @@
          (container my-cube)))
 
 (define-handler (my-cube hide) ()
-  (setf (vw (color my-cube)) (if (= (vw (color my-cube)) 1.0) 0.1 1.0)))
+  (setf (vw (color my-cube)) (if (= (vw (color my-cube)) 1.0) 0.1 1.0))
+  (harmony:play (// 'farm 'meow)))
 
 (define-handler (my-cube tick) (tt dt)
   (setf (orientation my-cube) (qfrom-angle +vy+ tt))
@@ -77,10 +89,11 @@
     (incf (vx (location my-cube)) (* dt speed (- (vx movement))))
     (incf (vz (location my-cube)) (* dt speed (vy movement)))))
 
-(defmethod setup-scene ((main main) scene)
+(defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'my-cube) scene)
   (enter (make-instance '3d-camera :location (vec 0 0 -3)) scene)
   (enter (make-instance 'render-pass) scene)
+  ;; (enter (make-instance 'fps-counter) scene)
   ;; Doesn't atually add a bullet to the scene graph, but does everything else
   ;; necessary to prepare this entity to be eventually loaded later.
   (preload (make-instance 'bullet) scene))
@@ -96,26 +109,4 @@
     (load-keymap)
     ;; Register our custom actions.
     (setf (active-p (action-set 'in-game)) t)
-    (apply #'trial:launch 'main args)))
-
-#+nil
-(launch)
-
-#+nil
-(maybe-reload-scene)
-
-;; Dynamically reload the Keymap and make sure the global one is resaved, or
-;; else local changes won't be reapplied on subsequent launches.
-#+nil
-(let ((*package* #.*package*))
-  (load-keymap :reset t))
-
-;; --- Controller Experiments --- ;;
-
-;; 2024-08-21 06:47:41 [INFO ] <TRIAL.INPUT>: Detected the following controllers:
-;;   Vendor: 2079 Product: 58369 Version: 272 Driver: EVDEV Name: USB gamepad
-
-#+nil
-(->> (gamepad:list-devices)
-  (car))
-;; (gamepad:configure-device))
+    (apply #'trial:launch 'stf-main args)))
