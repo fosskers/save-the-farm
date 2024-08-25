@@ -1,5 +1,10 @@
 (in-package :save-the-farm)
 
+;; --- Exploring Types --- ;;
+
+#+nil
+(find-class 'camera)
+
 ;; --- Loading the Game/Scene --- ;;
 
 #+nil
