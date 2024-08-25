@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <tileset firstgid="1" source="tmw_desert_spacing.tsx"/>
+ <object type="Plant" gid="31" width="32" height="32">
+  <properties>
+   <property name="spikey" type="bool" value="true"/>
+  </properties>
+ </object>
+</template>
