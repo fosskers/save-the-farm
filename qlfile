@@ -1,1 +1,6 @@
 dist http://dist.shirakumo.org/shirakumo.txt
+
+# A local Trial to fix a bug in the version available via the Shirakumo dist.
+local trial /home/colin/code/common-lisp/trial
+
+github harmony Shirakumo/harmony :ref e9ac76b81954ae20f01720b8156a772058568122

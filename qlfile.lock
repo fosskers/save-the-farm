@@ -5,4 +5,11 @@
 ("shirakumo" .
  (:class qlot/source/dist:source-dist
   :initargs (:distribution "https://dist.shirakumo.org/shirakumo.txt" :%version :latest)
-  :version "2024.08.16-07.28.33"))
+  :version "2024.08.23-09.22.48"))
+("trial" .
+ (:class qlot/source/local:source-local
+  :initargs (:path "/home/colin/code/common-lisp/trial")))
+("harmony" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "Shirakumo/harmony" :ref "e9ac76b81954ae20f01720b8156a772058568122" :branch nil :tag nil)
+  :version "github-e9ac76b81954ae20f01720b8156a772058568122"))
