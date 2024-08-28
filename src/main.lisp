@@ -18,16 +18,29 @@
 ;; it as is, but relative paths seem to be dead-set on staying within `src/' and
 ;; don't result in paths relative to the project root.
 (define-pool farm :base #p"/home/colin/code/common-lisp/save-the-farm/data/")
-(define-asset (farm tilemap) tile-data #p"map/field.tmj")
+;; (define-asset (farm tilemap) tile-data #p"map/field.tmj")
+(define-asset (farm lemon) sprite-data #p"sprites/lemon.json")
+
+(define-shader-entity my-lemon (animated-sprite located-entity)
+  ((sprite-data :initform (asset 'farm 'lemon))))
+
+#+nil
+(find-class 'my-lemon)
 
 (define-action-set in-game)
 (define-action move (directional-action in-game))
 (define-action shoot (in-game))
 
 (defmethod setup-scene ((main stf-main) scene)
-  (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
-  (enter (make-instance 'sidescroll-camera :zoom 12.0) scene)
+  ;; (enter (make-instance 'simple-sprite :sprite-data (assets:asset :wolf) :name :sprite) scene)
+  ;; (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
+  (enter (make-instance 'my-lemon :name :lemon) scene)
+  ;; (enter (make-instance 'sidescroll-camera :zoom 12.0) scene)
+  (enter (make-instance 'sidescroll-camera :zoom 10.0 :target (node :lemon scene)) scene)
   (enter (make-instance 'render-pass) scene))
+
+#+nil
+(find-class 'animated-sprite)
 
 (defun launch (&rest args)
   "Convenience function for launching the game. Also possible to do any other
