@@ -5,6 +5,9 @@
 #+nil
 (find-class 'camera)
 
+#+nil
+(asdf:find-system :harmony)
+
 ;; --- Loading the Game/Scene --- ;;
 
 #+nil
@@ -33,14 +36,6 @@
 #+nil
 (describe (scene +main+))
 
-;; --- Misc. Debugging --- ;;
-
-#+nil
-(debug-text (vec 0 1 -5) "Jack")
-
-#+nil
-(debug-clear)
-
 ;; --- Sound --- ;;
 
 #+nil
@@ -49,3 +44,12 @@
 
 #+nil
 (harmony:play (// 'farm 'meow))
+
+;; --- Misc. Debugging --- ;;
+
+#+nil
+(debug-text (vec 0 1 -5) "Jack")
+
+#+nil
+(debug-clear)
+

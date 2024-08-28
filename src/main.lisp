@@ -11,7 +11,7 @@
 
 (setf +app-system+ "save-the-farm")
 
-(defclass stf-main (trial-harmony:settings-main trial:main)
+(defclass stf-main (trial-harmony:settings-main)
   ())
 
 ;; `base' is somewhat sensitive. If you give it an absolute path it'll believe
