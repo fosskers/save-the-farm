@@ -17,10 +17,14 @@
 (define-pool farm :base #p"../../data/")
 (define-asset (farm lemon) sprite-data #p"sprites/lemon.json")
 (define-asset (farm farmer) sprite-data #p"sprites/farmer.json")
+(define-asset (farm origin-dot) sprite-data #p"sprites/dot.json")
 (define-asset (farm tilemap) tile-data #p"map/field.tmj")
 
 (define-shader-entity farmer (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'farmer))))
+
+(define-shader-entity origin-dot (animated-sprite located-entity)
+  ((sprite-data :initform (asset 'farm 'origin-dot))))
 
 (define-shader-entity my-lemon (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'lemon))))
@@ -29,24 +33,39 @@
 (define-action move (directional-action in-game))
 (define-action shoot (in-game))
 
+(defun moved? (movement)
+  "Did movement occur since the last tick?"
+  (or (> (vx movement) 0)
+      (< (vx movement) 0)
+      (> (vy movement) 0)
+      (< (vy movement) 0)))
+
 ;; NOTE: Movement directions are oriented with the origin at the bottom left.
 ;; Location coordinates are also oriented in the same way, meaning we can
 ;; naively add the movement to the location and everything "just works".
-(define-handler (farmer tick) (dt)
-  (let ((movement (directional 'move))
-        (speed 10.0))
-    (incf (vx (location farmer)) (* dt speed (vx movement)))
-    (incf (vy (location farmer)) (* dt speed (vy movement)))))
+(define-handler (farmer tick) (dt tt fc)
+  (let ((movement (directional 'move)))
+    ;; (incf (vx (location farmer)) (* dt speed (vx movement)))
+    ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
+    (incf (vx (location farmer)) (vx movement))
+    (incf (vy (location farmer)) (vy movement))
+    (when (moved? movement)
+      (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
+
+#+nil
+(find-class 'located-entity)
 
 (defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
   ;; (enter (make-instance 'my-lemon :name :lemon) scene)
   (enter (make-instance 'farmer :name :farmer) scene)
+  (enter (make-instance 'origin-dot :name :origin-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
   (enter (make-instance 'sidescroll-camera :zoom 5.0) scene)
-  (enter (make-instance 'render-pass) scene))
+  (enter (make-instance 'render-pass) scene)
+  (v:info :stf "Dot Location: ~a" (location (node :origin-dot scene))))
 
 #+nil
 (maybe-reload-scene)
@@ -63,7 +82,8 @@
     (load-keymap)
     ;; Register our custom actions.
     (setf (active-p (action-set 'in-game)) t)
-    (apply #'trial:launch 'stf-main args)))
+    (apply #'trial:launch 'stf-main args))
+  (v:info :stf "Exiting launch function."))
 
 #+nil
 (launch)
