@@ -4,3 +4,7 @@ dist http://dist.shirakumo.org/shirakumo.txt
 local trial /home/colin/code/common-lisp/trial
 
 github harmony Shirakumo/harmony :ref e9ac76b81954ae20f01720b8156a772058568122
+
+# Until it's available in the Shirakumo dist.
+github pathname-utils Shinmera/pathname-utils :ref eb77605d7aa9bc540b3f9dbb9201002e90733c1d
+github open-with Shinmera/open-with :ref 053c8ddf1579805659fe208987bcd44bc08df3c9

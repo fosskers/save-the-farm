@@ -13,3 +13,11 @@
  (:class qlot/source/github:source-github
   :initargs (:repos "Shirakumo/harmony" :ref "e9ac76b81954ae20f01720b8156a772058568122" :branch nil :tag nil)
   :version "github-e9ac76b81954ae20f01720b8156a772058568122"))
+("pathname-utils" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "Shinmera/pathname-utils" :ref "eb77605d7aa9bc540b3f9dbb9201002e90733c1d" :branch nil :tag nil)
+  :version "github-eb77605d7aa9bc540b3f9dbb9201002e90733c1d"))
+("open-with" .
+ (:class qlot/source/github:source-github
+  :initargs (:repos "Shinmera/open-with" :ref "053c8ddf1579805659fe208987bcd44bc08df3c9" :branch nil :tag nil)
+  :version "github-053c8ddf1579805659fe208987bcd44bc08df3c9"))
