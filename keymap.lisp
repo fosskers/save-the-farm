@@ -3,6 +3,7 @@
              (stick :one-of ((:dpad-h :dpad-v)))
              (keys :one-of ((:w :a :s :d))))
 
+#+nil
 (trigger hide
          (button :one-of (:a))
          (key :one-of (:space)))
