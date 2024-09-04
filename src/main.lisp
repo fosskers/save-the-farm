@@ -32,6 +32,7 @@
 (define-action-set in-game)
 (define-action move (directional-action in-game))
 (define-action shoot (in-game))
+(define-action kick (in-game))
 
 (defun moved? (movement)
   "Did movement occur since the last tick?"
@@ -56,11 +57,13 @@
     (incf (vx (location farmer)) (vx movement))
     (incf (vy (location farmer)) (vy movement))
     (when (moved? movement)
-      (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc)))
-  (play 'idle farmer))
+      (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
 
 #+nil
 (find-class 'located-entity)
+
+(define-handler (farmer kick) ()
+  (play 'kick farmer))
 
 (defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
@@ -85,7 +88,7 @@
   ;; > We bind the *package* to the one of our current source file to ensure that
   ;; > all symbols in the keymap are resolved to the ones from our package.
   (let ((*package* #.*package*))
-    (load-keymap)
+    (load-keymap :reset t)
     ;; Register our custom actions.
     (setf (active-p (action-set 'in-game)) t)
     (apply #'trial:launch 'stf-main args))

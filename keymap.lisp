@@ -8,6 +8,9 @@
          (button :one-of (:a))
          (key :one-of (:space)))
 
+(trigger kick
+         (button :one-of (:a)))
+
 (trigger shoot
          (button :one-of (:b))
          (key :one-of (:f)))
