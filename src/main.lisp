@@ -43,21 +43,27 @@
 ;; NOTE: Movement directions are oriented with the origin at the bottom left.
 ;; Location coordinates are also oriented in the same way, meaning we can
 ;; naively add the movement to the location and everything "just works".
-(define-handler (farmer tick) (dt tt fc)
+;;
+;; NOTE: This handler must be marked `:before' in order for the handler of the
+;; parent `animated-sprite' class to be automatically called afterwards. It is
+;; that handler that's performing the actual animation logic. Without doing so,
+;; calls to `play' won't do anything and the sprite will be stuck in its first
+;; frame.
+(define-handler (farmer tick :before) (tt fc)
   (let ((movement (directional 'move)))
     ;; (incf (vx (location farmer)) (* dt speed (vx movement)))
     ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
     (incf (vx (location farmer)) (vx movement))
     (incf (vy (location farmer)) (vy movement))
     (when (moved? movement)
-      (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
+      (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc)))
+  (play 'idle farmer))
 
 #+nil
 (find-class 'located-entity)
 
 (defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
-  ;; (enter (make-instance 'my-lemon :name :lemon) scene)
   (enter (make-instance 'farmer :name :farmer) scene)
   (enter (make-instance 'origin-dot :name :origin-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
