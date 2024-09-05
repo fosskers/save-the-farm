@@ -14,3 +14,6 @@
 (trigger shoot
          (button :one-of (:b))
          (key :one-of (:f)))
+
+(trigger reset
+         (button :one-of (:y)))

@@ -34,6 +34,7 @@
 (define-action move (directional-action in-game))
 (define-action shoot (in-game))
 (define-action kick (in-game))
+(define-action reset (in-game))
 
 (defun moved? (movement)
   "Did movement occur since the last tick?"
@@ -65,6 +66,14 @@
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
+
+(define-handler (farmer reset) ()
+  (v:info :stf "Resetting farmer position.")
+  (setf (location farmer) (vec 0 0 0)))
+
+;; TODO: 2024-09-06 Just for debugging - eventually remove.
+(define-handler (farmer gamepad-press :after) (button)
+  (v:info :stf "Button: ~a, Type: ~a" button (type-of button)))
 
 (defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
