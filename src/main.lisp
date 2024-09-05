@@ -4,7 +4,8 @@
   (:local-nicknames (:v :org.shirakumo.verbose)
                     (:gamepad :org.shirakumo.fraf.gamepad)
                     (:harmony :org.shirakumo.fraf.harmony)
-                    (:trial-harmony :org.shirakumo.fraf.trial.harmony))
+                    (:trial-harmony :org.shirakumo.fraf.trial.harmony)
+                    (:t :transducers))
   (:export :main :launch))
 
 (in-package :save-the-farm)
@@ -72,7 +73,7 @@
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
-  (enter (make-instance 'sidescroll-camera :zoom 5.0) scene)
+  (enter (make-instance 'sidescroll-camera :zoom 3.0) scene)
   (enter (make-instance 'render-pass) scene)
   (v:info :stf "Dot Location: ~a" (location (node :origin-dot scene))))
 

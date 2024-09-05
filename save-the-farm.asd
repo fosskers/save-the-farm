@@ -6,7 +6,8 @@
                :trial-png
                :trial-jpeg
                :cl-mixed-mpg123
-               :arrow-macros)
+               :arrow-macros
+               :transducers)
   :components ((:module "src"
                 :components
                 ((:file "main")))))

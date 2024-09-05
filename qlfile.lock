@@ -9,6 +9,18 @@
 ("trial" .
  (:class qlot/source/local:source-local
   :initargs (:path "/home/colin/code/common-lisp/trial")))
+("transducers" .
+ (:class qlot/source/git:source-git
+  :initargs (:remote-url "https://codeberg.org/fosskers/cl-transducers.git")
+  :version "git-c846a1547a28f43a055869e089ec1eede6b1d22a"))
+("fset" .
+ (:class qlot/source/git:source-git
+  :initargs (:remote-url "https://gitlab.common-lisp.net/fset/fset.git")
+  :version "git-d590b19b9777424f9f0d06196bf8e5c9e61ca2b4"))
+("misc-extensions" .
+ (:class qlot/source/git:source-git
+  :initargs (:remote-url "https://gitlab.common-lisp.net/misc-extensions/misc-extensions.git")
+  :version "git-57f2d235f0137b6074de75d6eefed13cf2637ad4"))
 ("harmony" .
  (:class qlot/source/github:source-github
   :initargs (:repos "Shirakumo/harmony" :ref "e9ac76b81954ae20f01720b8156a772058568122" :branch nil :tag nil)

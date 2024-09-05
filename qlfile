@@ -3,8 +3,12 @@ dist http://dist.shirakumo.org/shirakumo.txt
 # A local Trial to fix a bug in the version available via the Shirakumo dist.
 local trial /home/colin/code/common-lisp/trial
 
-github harmony Shirakumo/harmony :ref e9ac76b81954ae20f01720b8156a772058568122
+# Otherwise old version from Quicklisp is pulled.
+git transducers https://codeberg.org/fosskers/cl-transducers.git
+git fset https://gitlab.common-lisp.net/fset/fset.git
+git misc-extensions https://gitlab.common-lisp.net/misc-extensions/misc-extensions.git
 
-# Until it's available in the Shirakumo dist.
+# Until available in the Shirakumo dist.
+github harmony Shirakumo/harmony :ref e9ac76b81954ae20f01720b8156a772058568122
 github pathname-utils Shinmera/pathname-utils :ref eb77605d7aa9bc540b3f9dbb9201002e90733c1d
 github open-with Shinmera/open-with :ref 053c8ddf1579805659fe208987bcd44bc08df3c9
