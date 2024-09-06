@@ -83,13 +83,16 @@ box and the bounding box of the grid tile would be perfectly aligned."
        (+ -120 (* 16 y))
        0))
 
-#+nil
-(find-class 'sidescroll-camera)
+(defun spawn-crops (crop-type scene)
+  (let ((locs '((1 . 10) (1 . 9) (1 . 8) (1 . 7) (1 . 6) (1 . 5) (1 . 4)
+                (2 . 10) (2 . 9) (2 . 8) (2 . 7) (2 . 6) (2 . 5) (2 . 4))))
+    (dolist (loc locs)
+      (let ((crop (make-instance crop-type)))
+        (enter crop scene)
+        (setf (location crop) (grid->pixel (car loc) (cdr loc)))))))
 
 (defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap) :name :field) scene)
-  (enter (make-instance 'lemon :name :lemon) scene)
-  ;; (enter (make-instance 'farmer :name :farmer) scene)
   (enter (make-instance 'dot :name :origin-dot) scene)
   (enter (make-instance 'dot :name :corner-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
@@ -97,16 +100,17 @@ box and the bounding box of the grid tile would be perfectly aligned."
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
   (enter (make-instance 'sidescroll-camera :zoom 3.0 :name :camera) scene)
   (enter (make-instance 'render-pass) scene)
-  (v:info :stf "Dot Location: ~a" (location (node :origin-dot scene))))
+  (enter (make-instance 'farmer :name :farmer) scene))
 
 ;; NOTE: The sidescroll-camera insists on being at the origin. Even if you move
 ;; it here, it automatically glides back to the origin across the next second or
 ;; so.
 (defmethod setup-scene :after ((main stf-main) scene)
   (let ((corner-dot (node :corner-dot scene))
-        (lemon (node :lemon scene)))
+        (farmer     (node :farmer scene)))
     (setf (location corner-dot) (vec -127 -128 0))
-    (setf (location lemon) (grid->pixel 1 7))))
+    (setf (location farmer) (grid->pixel 4 7))
+    (spawn-crops 'lemon scene)))
 
 #+nil
 (maybe-reload-scene)
