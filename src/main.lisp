@@ -24,10 +24,10 @@
 (define-shader-entity farmer (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'farmer))))
 
-(define-shader-entity origin-dot (animated-sprite located-entity)
+(define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
 
-(define-shader-entity my-lemon (animated-sprite located-entity)
+(define-shader-entity lemon (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'lemon))))
 
 (define-action-set in-game)
@@ -75,16 +75,38 @@
 (define-handler (farmer gamepad-press :after) (button)
   (v:info :stf "Button: ~a, Type: ~a" button (type-of button)))
 
+(defun grid->pixel (x y)
+  "Given XY grid coordinates of the 16x15 grid screen, convert it to a pixel
+location vector such that were a sprite's `location' set to that, its bounding
+box and the bounding box of the grid tile would be perfectly aligned."
+  (vec (+ -120 (* 16 x))
+       (+ -120 (* 16 y))
+       0))
+
+#+nil
+(find-class 'sidescroll-camera)
+
 (defmethod setup-scene ((main stf-main) scene)
-  (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap)) scene)
-  (enter (make-instance 'farmer :name :farmer) scene)
-  (enter (make-instance 'origin-dot :name :origin-dot) scene)
+  (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap) :name :field) scene)
+  (enter (make-instance 'lemon :name :lemon) scene)
+  ;; (enter (make-instance 'farmer :name :farmer) scene)
+  (enter (make-instance 'dot :name :origin-dot) scene)
+  (enter (make-instance 'dot :name :corner-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
-  (enter (make-instance 'sidescroll-camera :zoom 3.0) scene)
+  (enter (make-instance 'sidescroll-camera :zoom 3.0 :name :camera) scene)
   (enter (make-instance 'render-pass) scene)
   (v:info :stf "Dot Location: ~a" (location (node :origin-dot scene))))
+
+;; NOTE: The sidescroll-camera insists on being at the origin. Even if you move
+;; it here, it automatically glides back to the origin across the next second or
+;; so.
+(defmethod setup-scene :after ((main stf-main) scene)
+  (let ((corner-dot (node :corner-dot scene))
+        (lemon (node :lemon scene)))
+    (setf (location corner-dot) (vec -127 -128 0))
+    (setf (location lemon) (grid->pixel 1 7))))
 
 #+nil
 (maybe-reload-scene)
