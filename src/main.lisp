@@ -21,8 +21,10 @@
 (define-asset (farm origin-dot) sprite-data #p"sprites/dot.json")
 (define-asset (farm tilemap) tile-data #p"map/field.tmj")
 
-(define-shader-entity farmer (animated-sprite located-entity)
-  ((sprite-data :initform (asset 'farm 'farmer))))
+(define-shader-entity farmer (animated-sprite located-entity transformed-entity)
+  ((sprite-data :initform (asset 'farm 'farmer))
+   (direction :initarg :direction :initform 1 :accessor direction
+              :type integer :documentation "-1 for left, +1 for right")))
 
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
@@ -52,17 +54,25 @@
 ;; that handler that's performing the actual animation logic. Without doing so,
 ;; calls to `play' won't do anything and the sprite will be stuck in its first
 ;; frame.
-(define-handler (farmer tick :before) (tt fc)
+(define-handler (farmer tick :before) ()
   (let ((movement (directional 'move)))
+    ;; (when (moved? movement)
     ;; (incf (vx (location farmer)) (* dt speed (vx movement)))
     ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
     (incf (vx (location farmer)) (vx movement))
     (incf (vy (location farmer)) (vy movement))
-    (when (moved? movement)
-      (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
+    (cond ((> (vx movement) 0) (setf (direction farmer) 1))
+          ((< (vx movement) 0) (setf (direction farmer) -1)))))
+
+;; (when (moved? movement)
+;;   (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
+
+(defmethod apply-transforms progn ((farmer farmer))
+  ;; FIXME Turning left makes him disappear.
+  (scale-by (direction farmer) 1 1))
 
 #+nil
-(find-class 'located-entity)
+(find-class 'transformed)
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
