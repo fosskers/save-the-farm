@@ -19,16 +19,26 @@
 (define-asset (farm lemon) sprite-data #p"sprites/lemon.json")
 (define-asset (farm farmer) sprite-data #p"sprites/farmer.json")
 (define-asset (farm origin-dot) sprite-data #p"sprites/dot.json")
+(define-asset (farm puff) sprite-data #p"sprites/puff.json")
 (define-asset (farm tilemap) tile-data #p"map/field.tmj")
 
 (define-shader-entity farmer (animated-sprite scaled-entity located-entity)
   ((sprite-data :initform (asset 'farm 'farmer))))
+
+(define-shader-entity puff (animated-sprite located-entity)
+  ((sprite-data :initform (asset 'farm 'puff))))
 
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
 
 (define-shader-entity lemon (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'lemon))))
+
+(defmethod set-facing (movement (thing scaled-entity))
+  "Assumes that the sprite naturally faces to the right, and flips it if it happens
+to be moving to the left."
+  (cond ((> (vx movement) 0) (setf (vx (scaling thing)) +1))
+        ((< (vx movement) 0) (setf (vx (scaling thing)) -1))))
 
 (define-action-set in-game)
 (define-action move (directional-action in-game))
@@ -59,16 +69,13 @@
     ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
     (incf (vx (location farmer)) (vx movement))
     (incf (vy (location farmer)) (vy movement))
-    (cond ((> (vx movement) 0) (setf (scaling farmer) (vec 1 1 1)))
-          ((< (vx movement) 0) (setf (scaling farmer) (vec -1 1 1))))))
+    ;; Flips the sprite if the player has pressed "left".
+    (set-facing movement farmer)))
 
-;; (when (moved? movement)
-;;   (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
-
-#+nil
-(defmethod apply-transforms progn ((farmer farmer))
-  ;; FIXME Turning left makes him disappear.
-  (scale-by (direction farmer) 1 1))
+(define-handler (farmer shoot) ()
+  (enter (make-instance 'puff :location (let ((loc (location farmer)))
+                                          (vec (vx loc) (vy loc) 0)))
+         (container farmer)))
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
@@ -76,6 +83,9 @@
 (define-handler (farmer reset) ()
   (v:info :stf "Resetting farmer position.")
   (setf (location farmer) (vec 0 0 0)))
+
+(define-handler (puff tick :before) ()
+  (incf (vx (location puff)) 1))
 
 ;; TODO: 2024-09-06 Just for debugging - eventually remove.
 (define-handler (farmer gamepad-press :after) (button)
@@ -116,7 +126,9 @@ box and the bounding box of the grid tile would be perfectly aligned."
         (farmer     (node :farmer scene)))
     (setf (location corner-dot) (vec -127 -128 0))
     (setf (location farmer) (grid->pixel 4 7))
-    (spawn-crops 'lemon scene)))
+    (spawn-crops 'lemon scene)
+    ;; Necessary to prevent a crash when spawning the first puff.
+    (preload (make-instance 'puff) scene)))
 
 (defmethod setup-rendering :after ((main stf-main))
   (disable-feature :cull-face))
