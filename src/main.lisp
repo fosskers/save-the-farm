@@ -21,10 +21,8 @@
 (define-asset (farm origin-dot) sprite-data #p"sprites/dot.json")
 (define-asset (farm tilemap) tile-data #p"map/field.tmj")
 
-(define-shader-entity farmer (animated-sprite located-entity transformed-entity)
-  ((sprite-data :initform (asset 'farm 'farmer))
-   (direction :initarg :direction :initform 1 :accessor direction
-              :type integer :documentation "-1 for left, +1 for right")))
+(define-shader-entity farmer (animated-sprite scaled-entity located-entity)
+  ((sprite-data :initform (asset 'farm 'farmer))))
 
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
@@ -61,18 +59,16 @@
     ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
     (incf (vx (location farmer)) (vx movement))
     (incf (vy (location farmer)) (vy movement))
-    (cond ((> (vx movement) 0) (setf (direction farmer) 1))
-          ((< (vx movement) 0) (setf (direction farmer) -1)))))
+    (cond ((> (vx movement) 0) (setf (scaling farmer) (vec 1 1 1)))
+          ((< (vx movement) 0) (setf (scaling farmer) (vec -1 1 1))))))
 
 ;; (when (moved? movement)
 ;;   (v:info :stf "Location: ~a, tt: ~a, fc: ~a" (location farmer) tt fc))))
 
+#+nil
 (defmethod apply-transforms progn ((farmer farmer))
   ;; FIXME Turning left makes him disappear.
   (scale-by (direction farmer) 1 1))
-
-#+nil
-(find-class 'transformed)
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
@@ -121,6 +117,9 @@ box and the bounding box of the grid tile would be perfectly aligned."
     (setf (location corner-dot) (vec -127 -128 0))
     (setf (location farmer) (grid->pixel 4 7))
     (spawn-crops 'lemon scene)))
+
+(defmethod setup-rendering :after ((main stf-main))
+  (disable-feature :cull-face))
 
 #+nil
 (maybe-reload-scene)
