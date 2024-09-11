@@ -1,19 +1,19 @@
 { "frames": [
    {
     "filename": "0 Flying",
-    "frame": { "x": 0, "y": 0, "w": 16, "h": 6 },
+    "frame": { "x": 0, "y": 0, "w": 15, "h": 6 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 0, "y": 5, "w": 16, "h": 6 },
+    "spriteSourceSize": { "x": 1, "y": 5, "w": 15, "h": 6 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 200
    },
    {
     "filename": "1 Flying",
-    "frame": { "x": 16, "y": 0, "w": 16, "h": 6 },
+    "frame": { "x": 15, "y": 0, "w": 15, "h": 6 },
     "rotated": false,
     "trimmed": true,
-    "spriteSourceSize": { "x": 0, "y": 5, "w": 16, "h": 6 },
+    "spriteSourceSize": { "x": 1, "y": 5, "w": 15, "h": 6 },
     "sourceSize": { "w": 16, "h": 16 },
     "duration": 200
    }
@@ -23,13 +23,13 @@
   "version": "1.3.8-dev",
   "image": "puff.png",
   "format": "I8",
-  "size": { "w": 32, "h": 6 },
+  "size": { "w": 30, "h": 6 },
   "scale": "1",
   "frameTags": [
    { "name": "Flying", "from": 0, "to": 1, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
-   { "name": "Puff", "opacity": 255, "blendMode": "normal" }
+   { "name": "Balls", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
   ]
