@@ -12,6 +12,11 @@
 
 (setf +app-system+ "save-the-farm")
 
+(defparameter +max-x+ 128)
+(defparameter +max-y+ 79)
+(defparameter +min-x+ -127)
+(defparameter +min-y+ -96)
+
 (defclass stf-main (trial-harmony:settings-main)
   ())
 
@@ -85,11 +90,21 @@ to be moving to the left."
   (setf (location farmer) (vec 0 0 0)))
 
 (define-handler (puff tick :before) ()
-  (incf (vx (location puff)) 1))
+  (incf (vx (location puff)) 1)
+  (when (not (in-x-bounds? (vx (location puff))))
+    (leave puff (container puff))))
 
 ;; TODO: 2024-09-06 Just for debugging - eventually remove.
 (define-handler (farmer gamepad-press :after) (button)
   (v:info :stf "Button: ~a, Type: ~a" button (type-of button)))
+
+(defun in-x-bounds? (x)
+  "Is a given X location within the bounds of the field?"
+  (<= +min-x+ x +max-x+))
+
+(defun in-y-bounds? (y)
+  "Is a given Y location within the bounds of the field?"
+  (<= +min-y+ y +max-y+))
 
 (defun grid->pixel (x y)
   "Given XY grid coordinates of the 16x15 grid screen, convert it to a pixel
@@ -110,31 +125,46 @@ box and the bounding box of the grid tile would be perfectly aligned."
 (defmethod setup-scene ((main stf-main) scene)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap) :name :field) scene)
   (enter (make-instance 'dot :name :origin-dot) scene)
-  (enter (make-instance 'dot :name :corner-dot) scene)
+  (enter (make-instance 'dot :name :bottom-left-dot) scene)
+  (enter (make-instance 'dot :name :bottom-right-dot) scene)
+  (enter (make-instance 'dot :name :top-left-dot) scene)
+  (enter (make-instance 'dot :name :top-right-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
   (enter (make-instance 'sidescroll-camera :zoom 3.0 :name :camera) scene)
   (enter (make-instance 'render-pass) scene)
-  (enter (make-instance 'farmer :name :farmer) scene))
+  (enter (make-instance 'farmer :name :farmer) scene)
+  ;; Necessary to prevent a crash when spawning the first puff.
+  (preload (make-instance 'puff) scene))
 
 ;; NOTE: The sidescroll-camera insists on being at the origin. Even if you move
 ;; it here, it automatically glides back to the origin across the next second or
 ;; so.
 (defmethod setup-scene :after ((main stf-main) scene)
-  (let ((corner-dot (node :corner-dot scene))
-        (farmer     (node :farmer scene)))
-    (setf (location corner-dot) (vec -127 -128 0))
+  (let ((bottom-left-dot  (node :bottom-left-dot scene))
+        (bottom-right-dot (node :bottom-right-dot scene))
+        (top-left-dot     (node :top-left-dot scene))
+        (top-right-dot    (node :top-right-dot scene))
+        (farmer           (node :farmer scene)))
+    ;; These four dot locations represent the bounds of the (NES) screen.
+    ;; Projectiles should:
+    ;;
+    ;; - Not render past the edge of the map, culling gradually as their pixels
+    ;; pass the edge.
+    ;; - Fully despawn when ther left-most pixels have passed beyond the edge.
+    (setf (location bottom-left-dot) (vec -127 -96 0))
+    (setf (location bottom-right-dot) (vec 128 -96 0))
+    (setf (location top-left-dot) (vec -127 79 0))
+    (setf (location top-right-dot) (vec 128 79 0))
     (setf (location farmer) (grid->pixel 4 7))
-    (spawn-crops 'lemon scene)
-    ;; Necessary to prevent a crash when spawning the first puff.
-    (preload (make-instance 'puff) scene)))
-
-(defmethod setup-rendering :after ((main stf-main))
-  (disable-feature :cull-face))
+    (spawn-crops 'lemon scene)))
 
 #+nil
 (maybe-reload-scene)
+
+(defmethod setup-rendering :after ((main stf-main))
+  (disable-feature :cull-face))
 
 (defun launch (&rest args)
   "Convenience function for launching the game. Also possible to do any other
