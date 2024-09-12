@@ -10,4 +10,6 @@
                :transducers)
   :components ((:module "src"
                 :components
-                ((:file "main")))))
+                ((:file "package")
+                 (:file "farmer")
+                 (:file "main")))))
