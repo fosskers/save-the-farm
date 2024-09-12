@@ -27,11 +27,18 @@
 (define-asset (farm puff) sprite-data #p"sprites/puff.json")
 (define-asset (farm tilemap) tile-data #p"map/field.tmj")
 
-(define-shader-entity farmer (animated-sprite scaled-entity located-entity)
+(defclass facing-entity (scaled-entity)
+  ((facing :initarg :facing :initform :right :accessor facing))
+  (:documentation "Things that can face left or right in a meaningful way."))
+
+(define-shader-entity farmer (animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'farmer))))
 
-(define-shader-entity puff (animated-sprite located-entity)
+(define-shader-entity puff (animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'puff))))
+
+#+nil
+(find-class 'puff)
 
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
@@ -39,11 +46,11 @@
 (define-shader-entity lemon (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'lemon))))
 
-(defmethod set-facing (movement (thing scaled-entity))
+(defun set-facing (movement entity)
   "Assumes that the sprite naturally faces to the right, and flips it if it happens
 to be moving to the left."
-  (cond ((> (vx movement) 0) (setf (vx (scaling thing)) +1))
-        ((< (vx movement) 0) (setf (vx (scaling thing)) -1))))
+  (cond ((> (vx movement) 0) (setf (facing entity) :right))
+        ((< (vx movement) 0) (setf (facing entity) :left))))
 
 (define-action-set in-game)
 (define-action move (directional-action in-game))
@@ -57,6 +64,11 @@ to be moving to the left."
       (< (vx movement) 0)
       (> (vy movement) 0)
       (< (vy movement) 0)))
+
+(define-handler (facing-entity tick :after) ()
+  (case (facing facing-entity)
+    (:left  (setf (vx (scaling facing-entity)) -1))
+    (:right (setf (vx (scaling facing-entity)) +1))))
 
 ;; NOTE: Movement directions are oriented with the origin at the bottom left.
 ;; Location coordinates are also oriented in the same way, meaning we can
@@ -78,8 +90,12 @@ to be moving to the left."
     (set-facing movement farmer)))
 
 (define-handler (farmer shoot) ()
-  (enter (make-instance 'puff :location (let ((loc (location farmer)))
-                                          (vec (vx loc) (vy loc) 0)))
+  (enter (make-instance 'puff
+                        :location (let ((loc (location farmer)))
+                                    (vec (vx loc) (vy loc) 0))
+                        ;; If the farmer is facing left, the puff should move
+                        ;; left, etc.
+                        :facing (facing farmer))
          (container farmer)))
 
 (define-handler (farmer kick) ()
@@ -90,7 +106,8 @@ to be moving to the left."
   (setf (location farmer) (vec 0 0 0)))
 
 (define-handler (puff tick :before) ()
-  (incf (vx (location puff)) 1)
+  (incf (vx (location puff))
+        (if (eq :left (facing puff)) -1 1))
   (when (not (in-x-bounds? (vx (location puff))))
     (leave puff (container puff))))
 
