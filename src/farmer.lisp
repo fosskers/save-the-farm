@@ -79,7 +79,8 @@
 (define-handler (puff tick :before) ()
   (incf (vx (location puff))
         (if (eq :left (facing puff)) -1 1))
-  (when (not (in-x-bounds? (vx (location puff))))
+  (when (or (not (in-x-bounds? (max-x puff)))
+            (not (in-x-bounds? (min-x puff))))
     (leave puff (container puff))))
 
 ;; --- Utils --- ;;
@@ -95,10 +96,17 @@ to be moving to the left."
 (defmethod max-x ((farmer farmer))
   (+ 9 (vx (location farmer))))
 
+(defmethod max-x ((puff puff))
+  (+ 8 (vx (location puff))))
+
 (defgeneric min-x (entity))
 
 (defmethod min-x ((farmer farmer))
   (- (vx (location farmer))
+     8))
+
+(defmethod min-x ((puff puff))
+  (- (vx (location puff))
      8))
 
 (defgeneric max-y (entity))
