@@ -41,18 +41,7 @@
     ;; (when (moved? movement)
     ;; (incf (vx (location farmer)) (* dt speed (vx movement)))
     ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
-    (cond ((and (> (vx movement) 0)
-                (in-x-bounds? (max-x farmer)))
-           (incf (vx (location farmer)) (vx movement)))
-          ((and (< (vx movement) 0)
-                (in-x-bounds? (min-x farmer)))
-           (incf (vx (location farmer)) (vx movement))))
-    (cond ((and (> (vy movement) 0)
-                (in-y-bounds? (max-y farmer)))
-           (incf (vy (location farmer)) (vy movement)))
-          ((and (< (vy movement) 0)
-                (in-y-bounds? (min-y farmer)))
-           (incf (vy (location farmer)) (vy movement))))
+    (move-if-in-bounds movement farmer)
     ;; Flips the sprite if the player has pressed "left".
     (set-facing movement farmer)))
 
@@ -107,7 +96,7 @@ to be moving to the left."
 
 (defmethod min-x ((puff puff))
   (- (vx (location puff))
-     8))
+     7))
 
 (defgeneric max-y (entity))
 
@@ -119,3 +108,23 @@ to be moving to the left."
 (defmethod min-y ((farmer farmer))
   (- (vy (location farmer))
      9))
+
+(defun move-if-in-bounds (movement entity)
+  (move-if-in-x-bounds movement entity)
+  (move-if-in-y-bounds movement entity))
+
+(defun move-if-in-x-bounds (movement entity)
+  (cond ((and (> (vx movement) 0)
+              (in-x-bounds? (max-x entity)))
+         (incf (vx (location entity)) (vx movement)))
+        ((and (< (vx movement) 0)
+              (in-x-bounds? (min-x entity)))
+         (incf (vx (location entity)) (vx movement)))))
+
+(defun move-if-in-y-bounds (movement entity)
+  (cond ((and (> (vy movement) 0)
+              (in-y-bounds? (max-y entity)))
+         (incf (vy (location entity)) (vy movement)))
+        ((and (< (vy movement) 0)
+              (in-y-bounds? (min-y entity)))
+         (incf (vy (location entity)) (vy movement)))))
