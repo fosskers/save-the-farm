@@ -81,7 +81,7 @@
   ;; > all symbols in the keymap are resolved to the ones from our package.
   (let ((*package* #.*package*))
     (load-keymap :reset t)
-    (setf (setting :display :target-framerate) 100)
+    (setf (setting :display :target-framerate) 60)
     ;; Register our custom actions.
     (setf (active-p (action-set 'in-game)) t)
     (apply #'trial:launch 'stf-main args))
