@@ -9,6 +9,15 @@
 (define-shader-entity lemon (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'lemon))))
 
+(defmethod min-x ((lemon lemon))
+  (- (vx (location lemon)) 7))
+(defmethod max-x ((lemon lemon))
+  (+ 8 (vx (location lemon))))
+(defmethod min-y ((lemon lemon))
+  (- (vy (location lemon)) 8))
+(defmethod max-y ((lemon lemon))
+  (+ 7 (vy (location lemon))))
+
 #+nil
 (defun moved? (movement)
   "Did movement occur since the last tick?"

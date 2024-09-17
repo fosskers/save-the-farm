@@ -72,42 +72,23 @@
             (not (in-x-bounds? (min-x puff))))
     (leave puff (container puff))))
 
-;; --- Utils --- ;;
+;; --- Movement --- ;;
 
-(defun set-facing (movement entity)
-  "Assumes that the sprite naturally faces to the right, and flips it if it happens
-to be moving to the left."
-  (cond ((> (vx movement) 0) (setf (facing entity) :right))
-        ((< (vx movement) 0) (setf (facing entity) :left))))
-
-(defgeneric max-x (entity))
-
+;; Confirmed via the "rainbow grid" test sprite and pencil-and-paper.
+(defmethod min-x ((farmer farmer))
+  (- (vx (location farmer)) 7))
 (defmethod max-x ((farmer farmer))
-  (+ 9 (vx (location farmer))))
+  (+ 8 (vx (location farmer))))
+(defmethod min-y ((farmer farmer))
+  (- (vy (location farmer)) 8))
+(defmethod max-y ((farmer farmer))
+  (+ 7 (vy (location farmer))))
 
+;; TODO: 2024-09-18 Move these.
 (defmethod max-x ((puff puff))
   (+ 8 (vx (location puff))))
-
-(defgeneric min-x (entity))
-
-(defmethod min-x ((farmer farmer))
-  (- (vx (location farmer))
-     8))
-
 (defmethod min-x ((puff puff))
-  (- (vx (location puff))
-     7))
-
-(defgeneric max-y (entity))
-
-(defmethod max-y ((farmer farmer))
-  (+ 8 (vy (location farmer))))
-
-(defgeneric min-y (entity))
-
-(defmethod min-y ((farmer farmer))
-  (- (vy (location farmer))
-     9))
+  (- (vx (location puff)) 7))
 
 (defun move-if-in-bounds (movement entity)
   (move-if-in-x-bounds movement entity)
@@ -128,3 +109,12 @@ to be moving to the left."
         ((and (< (vy movement) 0)
               (in-aisle-y-bounds? (min-y entity)))
          (incf (vy (location entity)) (vy movement)))))
+
+;; --- Utils --- ;;
+
+(defun set-facing (movement entity)
+  "Assumes that the sprite naturally faces to the right, and flips it if it happens
+to be moving to the left."
+  (cond ((> (vx movement) 0) (setf (facing entity) :right))
+        ((< (vx movement) 0) (setf (facing entity) :left))))
+

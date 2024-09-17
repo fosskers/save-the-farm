@@ -18,17 +18,12 @@
 (defparameter +min-x+ -127)
 (defparameter +min-y+ -96)
 
-;; The pixel-bounds of the farmer's walkable area; his "aisle".
-(defparameter +aisle-min-x+ (grid->min-x 4))
-(defparameter +aisle-max-x+ (grid->max-x 6))
-(defparameter +aisle-min-y+ (grid->min-y 2))
-(defparameter +aisle-max-y+ (grid->max-y 12))
-
 (define-pool farm :base #p"../../data/")
 (define-asset (farm lemon) sprite-data #p"sprites/lemon.json")
 (define-asset (farm farmer) sprite-data #p"sprites/farmer.json")
 (define-asset (farm origin-dot) sprite-data #p"sprites/dot.json")
 (define-asset (farm puff) sprite-data #p"sprites/puff.json")
+(define-asset (farm grid-test) sprite-data #p"sprites/grid-test.json")
 (define-asset (farm tilemap) tile-data #p"map/field.tmj")
 
 (define-action-set in-game)
@@ -39,19 +34,11 @@
 
 (defun in-x-bounds? (x)
   "Is a given X location within the bounds of the entire field?"
-  (<= +min-x+ x +max-x+))
+  (< +min-x+ x +max-x+))
 
-(defun in-y-bounds? (y)
-  "Is a given Y location within the bounds of the entire field?"
-  (<= +min-y+ y +max-y+))
-
-(defun in-aisle-x-bounds? (x)
-  "Is a given X location within the bounds of the farmer's walkable aisle?"
-  (<= +aisle-min-x+ x +aisle-max-x+))
-
-(defun in-aisle-y-bounds? (y)
-  "Is a given Y location within the bounds of the farmer's walkable aisle?"
-  (<= +aisle-min-y+ y +aisle-max-y+))
+;; (defun in-y-bounds? (y)
+;;   "Is a given Y location within the bounds of the entire field?"
+;;   (<= +min-y+ y +max-y+))
 
 (defun grid->pixel (x y)
   "Given XY grid coordinates of the 16x15 grid screen, convert it to a pixel
@@ -81,12 +68,18 @@ In other words, the common Y value of the bottom side of its bounding box."
 In other words, the common Y value of the top side of its bounding box."
   (+ -113 (* 16 grid-y)))
 
-#+nil
-(let ((dot (make-instance 'dot :name :tempdot)))
-  (enter dot (scene +main+))
-  (setf (location dot) (vec 0 (grid->max-y 1) 0)))
+;; The pixel-bounds of the farmer's walkable area; his "aisle".
+(defparameter +aisle-min-x+ (grid->min-x 4))
+(defparameter +aisle-max-x+ (grid->max-x 6))
+(defparameter +aisle-min-y+ (grid->min-y 2))
+(defparameter +aisle-max-y+ (grid->max-y 12))
 
-#+nil
-(let* ((scene (scene +main+))
-       (dot (node :tempdot scene)))
-  (leave dot scene))
+(defun in-aisle-x-bounds? (x)
+  "Is a given X location within the bounds of the farmer's walkable aisle? Touching
+is considered out of bounds, thus preventing movement."
+  (< +aisle-min-x+ x +aisle-max-x+))
+
+(defun in-aisle-y-bounds? (y)
+  "Is a given Y location within the bounds of the farmer's walkable aisle? Touching
+is considered out of bounds, thus preventing movement."
+  (< +aisle-min-y+ y +aisle-max-y+))
