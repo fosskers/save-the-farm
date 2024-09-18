@@ -41,6 +41,8 @@
   (enter (make-instance 'dot :name :bottom-right-dot) scene)
   (enter (make-instance 'dot :name :top-left-dot) scene)
   (enter (make-instance 'dot :name :top-right-dot) scene)
+  (enter (make-instance 'dot :name :truly-bottom-dot) scene)
+  (enter (make-instance 'dot :name :truly-top-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
@@ -59,6 +61,8 @@
         (bottom-right-dot (node :bottom-right-dot scene))
         (top-left-dot     (node :top-left-dot scene))
         (top-right-dot    (node :top-right-dot scene))
+        (truly-bottom     (node :truly-bottom-dot scene))
+        (truly-top        (node :truly-top-dot scene))
         (farmer           (node :farmer scene)))
     ;; These four dot locations represent the bounds of the (NES) screen.
     ;; Projectiles should:
@@ -66,6 +70,8 @@
     ;; - Not render past the edge of the map, culling gradually as their pixels
     ;; pass the edge.
     ;; - Fully despawn when ther left-most pixels have passed beyond the edge.
+    (setf (location truly-bottom) (vec +screen-min-x+ +screen-min-y+ 0))
+    (setf (location truly-top) (vec +screen-max-x+ +screen-max-y+ 0))
     (setf (location bottom-left-dot) (vec +min-x+ +min-y+ 0))
     (setf (location bottom-right-dot) (vec +max-x+ +min-y+ 0))
     (setf (location top-left-dot) (vec +min-x+ +max-y+ 0))

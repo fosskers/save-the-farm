@@ -1,13 +1,5 @@
 (in-package :save-the-farm)
 
-;; --- Exploring Types --- ;;
-
-#+nil
-(find-class 'camera)
-
-#+nil
-(asdf:find-system :harmony)
-
 ;; --- Loading the Game/Scene --- ;;
 
 #+nil

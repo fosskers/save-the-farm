@@ -13,10 +13,16 @@
 (setf +app-system+ "save-the-farm")
 
 ;; The pixel-bounds of the field.
-(defparameter +max-x+ 128)
-(defparameter +max-y+ 79)
 (defparameter +min-x+ -127)
+(defparameter +max-x+ 128)
 (defparameter +min-y+ -96)
+(defparameter +max-y+ 79)
+
+;; The pixel-bounds of the NES screen (not the user's window itself).
+(defparameter +screen-min-x+ +min-x+)
+(defparameter +screen-max-x+ +max-x+)
+(defparameter +screen-min-y+ (- +min-y+ 32))
+(defparameter +screen-max-y+ (+ +max-y+ 32))
 
 (define-pool farm :base #p"../../data/")
 (define-asset (farm lemon) sprite-data #p"sprites/lemon.json")
@@ -39,6 +45,29 @@
 ;; (defun in-y-bounds? (y)
 ;;   "Is a given Y location within the bounds of the entire field?"
 ;;   (<= +min-y+ y +max-y+))
+
+(defun pixel->grid (x y)
+  "Given XY pixel coordinates, determine where on the 16x15 grid it is."
+  ;; Subtracting by negative numbers shifts all points into a positive range
+  ;; without needing to call `abs'.
+  (let ((shifted-x (- x +screen-min-x+))
+        (shifted-y (- y +screen-min-y+)))
+    ;; Dividing by 16, since each grid block is 16x16 pixels.
+    (values (floor (/ shifted-x 16))
+            (floor (/ shifted-y 16)))))
+
+;; The origin is at 7x8
+#+nil
+(pixel->grid 0 0)
+
+#+nil
+(let* ((scene  (scene +main+))
+       (farmer (node :farmer scene))
+       (dot    (make-instance 'dot :name :farmer-dot :location (location farmer))))
+  (enter dot scene)
+  (observe! (pixel->grid (vx (location farmer))
+                         (vy (location farmer)))
+            :title "Farmer Grid Loc"))
 
 (defun grid->pixel (x y)
   "Given XY grid coordinates of the 16x15 grid screen, convert it to a pixel
