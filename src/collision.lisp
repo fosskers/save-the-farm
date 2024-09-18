@@ -13,6 +13,26 @@
 (defgeneric min-y (entity)
   (:documentation "The pixel-Y coordinate of the bottom-most part of the entity."))
 
+(defun in-vacinity? (a-x a-y b-x b-y)
+  "Given the XY grid coordinates of two objects, is the second no more than 1 grid
+block away from the first in any direction?"
+  (and (<= (1- a-x) b-x (1+ a-x))
+       (<= (1- a-y) b-y (1+ a-y))))
+
+#+nil
+(let* ((scene  (scene +main+))
+       (farmer (node :farmer scene))
+       (lemon  (make-instance 'lemon :name :templemon)))
+  (enter lemon scene)
+  (setf (location lemon) (grid->pixel 5 7))
+  (observe! (location lemon) :title "Lemon")
+  (observe! (multiple-value-bind (f-x f-y) (pixel->grid (vx (location farmer))
+                                                        (vy (location farmer)))
+              (multiple-value-bind (l-x l-y) (pixel->grid (vx (location lemon))
+                                                          (vy (location lemon)))
+                (in-vacinity? f-x f-y l-x l-y)))
+            :title "Vacinity?"))
+
 (defun overlapping? (a b)
   "Do the bounding boxes of two entities overlap? Overlapping is defined as a state
 where any one of the corners of A are fully within the bounds of B. A is assumed
@@ -61,4 +81,3 @@ to be to the left of B, but the algorithm will adjust if this isn't so."
   (observe! (vec (min-x farmer) (max-x farmer) (min-y farmer) (max-y farmer)) :title "FarmerXY")
   (observe! (vec (min-x lemon) (max-x lemon) (min-y lemon) (max-y lemon)) :title "LemonXY")
   (observe! (overlapping? farmer lemon) :title "Overlapping?"))
-
