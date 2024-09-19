@@ -11,6 +11,8 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
+                 (:file "transducers")
                  (:file "collision")
+                 (:file "bugs")
                  (:file "farmer")
                  (:file "main")))))
