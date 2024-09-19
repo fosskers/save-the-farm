@@ -26,15 +26,18 @@
       (> (vy movement) 0)
       (< (vy movement) 0)))
 
-(defun spawn-crops (crop-type scene)
+(defun spawn-crops (crop-type container)
   (let ((locs '((1 . 10) (1 . 9) (1 . 8) (1 . 7) (1 . 6) (1 . 5) (1 . 4)
                 (2 . 10) (2 . 9) (2 . 8) (2 . 7) (2 . 6) (2 . 5) (2 . 4))))
     (dolist (loc locs)
       (let ((crop (make-instance crop-type)))
-        (enter crop scene)
+        (enter crop container)
         (setf (location crop) (grid->pixel (car loc) (cdr loc)))))))
 
 (defmethod setup-scene ((main stf-main) scene)
+  (setf *crops* (make-instance 'bag))
+  (setf *bugs* (make-instance 'bag))
+  (setf *puffs* (make-instance 'bag))
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap) :name :field) scene)
   (enter (make-instance 'dot :name :origin-dot) scene)
   (enter (make-instance 'dot :name :bottom-left-dot) scene)
@@ -49,6 +52,12 @@
   (enter (make-instance 'sidescroll-camera :zoom 3.0 :name :camera) scene)
   (enter (make-instance 'render-pass) scene)
   (enter (make-instance 'farmer :name :farmer) scene)
+  (enter *crops* scene)
+  (enter *bugs* scene)
+  (enter *puffs* scene)
+  (enter (make-instance 'bug-fly :name :fly0) *bugs*)
+  (enter (make-instance 'bug-fly :name :fly1) *bugs*)
+  (enter (make-instance 'bug-fly :name :fly2) *bugs*)
   (enter (make-instance 'display-controller) scene)
   ;; Necessary to prevent a crash when spawning the first puff.
   (preload (make-instance 'puff) scene))
@@ -63,6 +72,9 @@
         (top-right-dot    (node :top-right-dot scene))
         (truly-bottom     (node :truly-bottom-dot scene))
         (truly-top        (node :truly-top-dot scene))
+        (fly0             (node :fly0 scene))
+        (fly1             (node :fly1 scene))
+        (fly2             (node :fly2 scene))
         (farmer           (node :farmer scene)))
     ;; These four dot locations represent the bounds of the (NES) screen.
     ;; Projectiles should:
@@ -77,11 +89,11 @@
     (setf (location top-left-dot) (vec +min-x+ +max-y+ 0))
     (setf (location top-right-dot) (vec +max-x+ +max-y+ 0))
     (setf (location farmer) (grid->pixel 4 7))
-    (spawn-crops 'lemon scene)
+    (setf (location fly0) (grid->pixel 6 7))
+    (setf (location fly1) (grid->pixel 5 12))
+    (setf (location fly2) (grid->pixel 4 3))
+    (spawn-crops 'lemon *crops*)
     (observe! (location (node :farmer scene)) :title "Farmer")))
-
-#+nil
-(maybe-reload-scene)
 
 (defmethod setup-rendering :after ((main stf-main))
   (disable-feature :cull-face))
@@ -104,3 +116,9 @@
 
 #+nil
 (launch)
+
+#+nil
+(maybe-reload-scene)
+
+#+nil
+(scene +main+)

@@ -53,7 +53,25 @@ to be to the left of B, but the algorithm will adjust if this isn't so."
             (and (<= b-min-y a-min-y b-max-y)
                  (<= b-min-x a-max-x b-max-x))))))
 
+(defun collision-candidate (entity container)
+  "Given an ENTITY and another CONTAINER of entities, determine the first (if any)
+that is in the vacinity of the ENTITY."
+  (multiple-value-bind (a-x a-y) (pixel->grid (vx (location entity))
+                                              (vy (location entity)))
+    (t:transduce (t:filter (lambda (other)
+                             (multiple-value-bind (b-x b-y) (pixel->grid (vx (location other))
+                                                                         (vy (location other)))
+                               (in-vacinity? a-x a-y b-x b-y))))
+                 #'t:first container))) ;; TODO: Don't throw when there's no match.
+
+#+nil
+(let ((farmer (node :farmer (scene +main+))))
+  (collision-candidate farmer *bugs*))
+
 ;; --- Collision Testing --- ;;
+
+#+nil
+*bugs*
 
 #+nil
 (launch)

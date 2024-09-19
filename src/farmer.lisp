@@ -5,27 +5,19 @@
 #+nil
 (launch)
 
+#+nil
+(scene +main+)
+
 ;; --- Types --- ;;
 
-(defclass facing-entity (scaled-entity)
-  ((facing :initarg :facing :initform :right :accessor facing))
-  (:documentation "Things that can face left or right in a meaningful way."))
-
 (define-shader-entity farmer (animated-sprite facing-entity located-entity)
-  ((sprite-data :initform (asset 'farm 'farmer))))
+  ((sprite-data :initform (asset 'farm 'farmer))
+   (stunned? :initform nil :accessor stunned?)))
 
 (define-shader-entity puff (animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'puff))))
 
-#+nil
-(find-class 'puff)
-
 ;; --- Handlers --- ;;
-
-(define-handler (facing-entity tick :after) ()
-  (case (facing facing-entity)
-    (:left  (setf (vx (scaling facing-entity)) -1))
-    (:right (setf (vx (scaling facing-entity)) +1))))
 
 ;; NOTE: Movement directions are oriented with the origin at the bottom left.
 ;; Location coordinates are also oriented in the same way, meaning we can
@@ -45,6 +37,10 @@
     ;; Flips the sprite if the player has pressed "left".
     (set-facing movement farmer)))
 
+#+nil
+(let ((farmer (node :farmer (scene +main+))))
+  ())
+
 (define-handler (farmer shoot) ()
   (enter (make-instance 'puff
                         :location (let ((loc (location farmer)))
@@ -52,7 +48,7 @@
                         ;; If the farmer is facing left, the puff should move
                         ;; left, etc.
                         :facing (facing farmer))
-         (container farmer)))
+         *puffs*))
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
@@ -109,12 +105,3 @@
         ((and (< (vy movement) 0)
               (in-aisle-y-bounds? (min-y entity)))
          (incf (vy (location entity)) (vy movement)))))
-
-;; --- Utils --- ;;
-
-(defun set-facing (movement entity)
-  "Assumes that the sprite naturally faces to the right, and flips it if it happens
-to be moving to the left."
-  (cond ((> (vx movement) 0) (setf (facing entity) :right))
-        ((< (vx movement) 0) (setf (facing entity) :left))))
-
