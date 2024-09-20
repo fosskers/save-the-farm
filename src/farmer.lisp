@@ -6,13 +6,16 @@
 (launch)
 
 #+nil
-(scene +main+)
+(maybe-reload-scene)
 
 ;; --- Types --- ;;
 
 (define-shader-entity farmer (animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'farmer))
    (stunned? :initform nil :accessor stunned?)))
+
+#+nil
+(node :farmer (scene +main+))
 
 (define-shader-entity puff (animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'puff))))
@@ -28,9 +31,21 @@
 ;; that handler that's performing the actual animation logic. Without doing so,
 ;; calls to `play' won't do anything and the sprite will be stuck in its first
 ;; frame.
-(define-handler (farmer tick :before) ()
+(define-handler (farmer tick :before) (fc)
+  (let ((nearby-bug (collision-candidate farmer *bugs*)))
+    (when (and nearby-bug (overlapping? farmer nearby-bug))
+      (v:info :stf "Stunned!")
+      (leave nearby-bug (container nearby-bug))
+      (setf (stunned? farmer) fc)))
+  (let ((stunned-frame (stunned? farmer)))
+    (cond ((and stunned-frame (> (- fc stunned-frame) +stun-timeout+))
+           (setf (stunned? farmer) nil)
+           (move-farmer farmer))
+          (stunned-frame nil) ; Halts movement if stunned.
+          (t (move-farmer farmer)))))
+
+(defun move-farmer (farmer)
   (let ((movement (directional 'move)))
-    ;; (when (moved? movement)
     ;; (incf (vx (location farmer)) (* dt speed (vx movement)))
     ;; (incf (vy (location farmer)) (* dt speed (vy movement)))
     (move-if-in-bounds movement farmer)
@@ -38,8 +53,10 @@
     (set-facing movement farmer)))
 
 #+nil
-(let ((farmer (node :farmer (scene +main+))))
-  ())
+(progn
+  (observe! (slot-value *bugs* 'trial::%objects) :title "Bugs")
+  (observe! (slot-value *bugs* 'trial::%count) :title "Bug Count")
+  (observe! (t:transduce #'t:pass #'t:cons *bugs*) :title "Transduced"))
 
 (define-handler (farmer shoot) ()
   (enter (make-instance 'puff

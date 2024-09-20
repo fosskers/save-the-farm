@@ -149,3 +149,8 @@ is considered out of bounds, thus preventing movement."
 to be moving to the left."
   (cond ((> (vx movement) 0) (setf (facing entity) :right))
         ((< (vx movement) 0) (setf (facing entity) :left))))
+
+;; --- MISC. GLOBALS --- ;;
+
+(defparameter +stun-timeout+ 60
+  "The number of frames to maintain the farmer's stun status.")
