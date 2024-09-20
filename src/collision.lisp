@@ -62,11 +62,11 @@ that is in the vacinity of the ENTITY."
                              (multiple-value-bind (b-x b-y) (pixel->grid (vx (location other))
                                                                          (vy (location other)))
                                (in-vacinity? a-x a-y b-x b-y))))
-                 #'t:first container))) ;; TODO: Don't throw when there's no match.
+                 (first-or nil) container)))
 
 #+nil
 (let ((farmer (node :farmer (scene +main+))))
-  (collision-candidate farmer *bugs*))
+  (observe! (collision-candidate farmer *bugs*) :title "Candidate"))
 
 ;; --- Collision Testing --- ;;
 
