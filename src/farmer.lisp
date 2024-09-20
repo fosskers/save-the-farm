@@ -36,10 +36,12 @@
     (when (and nearby-bug (overlapping? farmer nearby-bug))
       (v:info :stf "Stunned!")
       (leave nearby-bug (container nearby-bug))
-      (setf (stunned? farmer) fc)))
+      (setf (stunned? farmer) fc)
+      (play 'stunned farmer)))
   (let ((stunned-frame (stunned? farmer)))
     (cond ((and stunned-frame (> (- fc stunned-frame) +stun-timeout+))
            (setf (stunned? farmer) nil)
+           (play 'idle farmer)
            (move-farmer farmer))
           (stunned-frame nil) ; Halts movement if stunned.
           (t (move-farmer farmer)))))
