@@ -89,9 +89,9 @@
     (setf (location top-left-dot) (vec +min-x+ +max-y+ 0))
     (setf (location top-right-dot) (vec +max-x+ +max-y+ 0))
     (setf (location farmer) (grid->pixel 4 7))
-    (setf (location fly0) (grid->pixel 6 7))
-    (setf (location fly1) (grid->pixel 5 12))
-    (setf (location fly2) (grid->pixel 4 3))
+    (setf (location fly0) (grid->pixel 15 7))
+    (setf (location fly1) (grid->pixel 15 12))
+    (setf (location fly2) (grid->pixel 15 3))
     (spawn-crops 'lemon *crops*)
     (observe! (location (node :farmer scene)) :title "Farmer")))
 
