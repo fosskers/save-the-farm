@@ -17,7 +17,8 @@
 
 (define-shader-entity bug-fly (bug animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'bug-fly))
-   (facing :initform :left :accessor facing)))
+   (facing :initform :left :accessor facing)
+   (health :initform 2 :accessor health)))
 
 (defmethod min-x ((bug-fly bug-fly))
   (- (vx (location bug-fly)) 7))
@@ -31,10 +32,17 @@
 ;; --- Handlers --- ;;
 
 (define-handler (bug tick :before) ()
-  (funcall (movement-scheme bug) bug)
-  ;; Automatic despawn when out of bounds.
-  (when (not (in-x-bounds? (max-x bug)))
-    (leave bug (container bug))))
+  (let ((nearby-puff (collision-candidate bug *puffs*)))
+    (when (and nearby-puff (overlapping? bug nearby-puff))
+      (decf (health bug) +puff-damage+)
+      (leave nearby-puff (container nearby-puff))
+      (when (zerop (health bug))
+        (leave bug (container bug))))))
+;; (funcall (movement-scheme bug) bug)
+;; Automatic despawn when out of bounds.
+;; (when (not (in-x-bounds? (max-x bug)))
+;;   (v:info :stf "Bug dead.")
+;;   (leave bug (container bug))))
 
 ;; --- Movement --- ;;
 

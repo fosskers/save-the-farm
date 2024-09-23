@@ -154,3 +154,6 @@ to be moving to the left."
 
 (defparameter +stun-timeout+ 60
   "The number of frames to maintain the farmer's stun status.")
+
+(defparameter +puff-damage+ 1
+  "The amount of damage inflicted by a farmer's gas puff.")

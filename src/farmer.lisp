@@ -61,13 +61,13 @@
   (observe! (t:transduce #'t:pass #'t:cons *bugs*) :title "Transduced"))
 
 (define-handler (farmer shoot) ()
-  (enter (make-instance 'puff
-                        :location (let ((loc (location farmer)))
-                                    (vec (vx loc) (vy loc) 0))
-                        ;; If the farmer is facing left, the puff should move
-                        ;; left, etc.
-                        :facing (facing farmer))
-         *puffs*))
+  (let* ((loc (vec (vx (location farmer)) (vy (location farmer)) 0))
+         (puff (make-instance 'puff
+                              :location loc
+                              ;; If the farmer is facing left, the puff should move
+                              ;; left, etc.
+                              :facing (facing farmer))))
+    (enter puff *puffs*)))
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
@@ -100,10 +100,14 @@
   (+ 7 (vy (location farmer))))
 
 ;; TODO: 2024-09-18 Move these.
-(defmethod max-x ((puff puff))
-  (+ 8 (vx (location puff))))
 (defmethod min-x ((puff puff))
-  (- (vx (location puff)) 7))
+  (vx (location puff)))
+(defmethod max-x ((puff puff))
+  (1+ (vx (location puff))))
+(defmethod min-y ((puff puff))
+  (vy (location puff)))
+(defmethod max-y ((puff puff))
+  (1+ (vy (location puff))))
 
 (defun move-if-in-bounds (movement entity)
   (move-if-in-x-bounds movement entity)
