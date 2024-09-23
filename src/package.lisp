@@ -46,6 +46,11 @@
 
 ;; --- GRID AND PIXEL COORDINATES --- ;;
 
+(defparameter +grid-min-x+ 0)
+(defparameter +grid-max-x+ 15)
+(defparameter +grid-min-y+ 0)
+(defparameter +grid-max-y+ 14)
+
 ;; The pixel-bounds of the field.
 (defparameter +min-x+ -127)
 (defparameter +max-x+ 128)

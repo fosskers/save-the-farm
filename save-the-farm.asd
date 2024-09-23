@@ -14,6 +14,7 @@
                  (:file "transducers")
                  (:file "collision")
                  (:file "bugs")
+                 (:file "crops")
                  (:file "farmer")
                  (:file "level")
                  (:file "main")))))

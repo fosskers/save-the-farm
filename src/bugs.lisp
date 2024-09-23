@@ -13,7 +13,8 @@
 (defclass bug ()
   ((movement-scheme :accessor movement-scheme)
    (movement-speed  :accessor movement-speed)
-   (health          :accessor health))
+   (health          :accessor health :documentation "Remaining health of the bug.")
+   (damage          :accessor damage :documentation "Damage dealt to a crop upon contact."))
   (:documentation "Behaviour common to all bugs."))
 
 (define-shader-entity bug-fly (bug animated-sprite facing-entity located-entity)
@@ -21,7 +22,8 @@
    (movement-scheme :initform #'move-straight)
    (movement-speed  :initform (+ 0.25 (cl:random 0.5)))
    (facing          :initform :left)
-   (health          :initform 2)))
+   (health          :initform 2)
+   (damage          :initform 1)))
 
 (defmethod min-x ((bug-fly bug-fly))
   (- (vx (location bug-fly)) 7))

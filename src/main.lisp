@@ -8,18 +8,6 @@
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
 
-(define-shader-entity lemon (animated-sprite located-entity)
-  ((sprite-data :initform (asset 'farm 'lemon))))
-
-(defmethod min-x ((lemon lemon))
-  (- (vx (location lemon)) 7))
-(defmethod max-x ((lemon lemon))
-  (+ 8 (vx (location lemon))))
-(defmethod min-y ((lemon lemon))
-  (- (vy (location lemon)) 8))
-(defmethod max-y ((lemon lemon))
-  (+ 7 (vy (location lemon))))
-
 #+nil
 (defun moved? (movement)
   "Did movement occur since the last tick?"
@@ -27,14 +15,6 @@
       (< (vx movement) 0)
       (> (vy movement) 0)
       (< (vy movement) 0)))
-
-(defun spawn-crops (crop-type container)
-  (let ((locs '((1 . 10) (1 . 9) (1 . 8) (1 . 7) (1 . 6) (1 . 5) (1 . 4)
-                (2 . 10) (2 . 9) (2 . 8) (2 . 7) (2 . 6) (2 . 5) (2 . 4))))
-    (dolist (loc locs)
-      (let ((crop (make-instance crop-type)))
-        (enter crop container)
-        (setf (location crop) (grid->pixel (car loc) (cdr loc)))))))
 
 (defmethod setup-scene ((main stf-main) scene)
   (setf *crops* (make-instance 'bag))
