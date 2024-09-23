@@ -35,23 +35,34 @@ block away from the first in any direction?"
 
 (defun overlapping? (a b)
   "Do the bounding boxes of two entities overlap? Overlapping is defined as a state
-where any one of the corners of A are fully within the bounds of B. A is assumed
-to be to the left of B, but the algorithm will adjust if this isn't so."
-  (if (< (min-x b) (min-x a))
-      (overlapping? b a)
-      (let ((a-max-x (max-x a))
-            (a-min-y (min-y a))
-            (a-max-y (max-y a))
-            (b-min-x (min-x b))
-            (b-max-x (max-x b))
-            (b-min-y (min-y b))
-            (b-max-y (max-y b)))
-        ;; Because we know that A is always on the left, we only need to test
-        ;; its two right corners.
-        (or (and (<= b-min-y a-max-y b-max-y)
-                 (<= b-min-x a-max-x b-max-x))
-            (and (<= b-min-y a-min-y b-max-y)
-                 (<= b-min-x a-max-x b-max-x))))))
+where:
+
+1. The bottom-left or top-right corners of A are within B.
+2. The top-left or bottom-right corners of B are within A.
+
+This also naturally accounts for one object being entirely within the other, as
+can happen for small projectiles being enveloped by a large bug."
+  (let ((a-max-x (max-x a))
+        (a-max-y (max-y a))
+        (a-min-x (min-x a))
+        (a-min-y (min-y a))
+        (b-min-x (min-x b))
+        (b-max-x (max-x b))
+        (b-min-y (min-y b))
+        (b-max-y (max-y b)))
+    (or
+     ;; A top-right within B.
+     (and (<= b-min-x a-max-x b-max-x)
+          (<= b-min-y a-max-y b-max-y))
+     ;; B bottom-right within A.
+     (and (<= a-min-x b-max-x a-max-x)
+          (<= a-min-y b-min-y a-max-y))
+     ;; B top-left within A.
+     (and (<= a-min-x b-min-x a-max-x)
+          (<= a-min-y b-max-y a-max-y))
+     ;; A bottom-left within B.
+     (and (<= b-min-x a-min-x b-max-x)
+          (<= b-min-y a-min-y b-max-y)))))
 
 (defun collision-candidate (entity container)
   "Given an ENTITY and another CONTAINER of entities, determine the first (if any)

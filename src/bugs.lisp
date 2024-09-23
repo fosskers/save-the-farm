@@ -19,7 +19,7 @@
 (define-shader-entity bug-fly (bug animated-sprite facing-entity located-entity)
   ((sprite-data     :initform (asset 'farm 'bug-fly))
    (movement-scheme :initform #'move-straight)
-   (movement-speed  :initform (+ 0.5 (cl:random 0.5)))
+   (movement-speed  :initform (+ 0.25 (cl:random 0.5)))
    (facing          :initform :left)
    (health          :initform 2)))
 
@@ -44,7 +44,6 @@
   (funcall (movement-scheme bug) bug)
   ;; Automatic despawn when out of bounds.
   (when (not (in-x-bounds? (max-x bug)))
-    (v:info :stf "Bug dead.")
     (leave bug (container bug))))
 
 ;; --- Movement --- ;;
