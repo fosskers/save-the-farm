@@ -154,7 +154,7 @@ to be moving to the left."
 
 (defparameter +framerate+ 60)
 
-(defparameter +stun-timeout+ 60
+(defparameter +stun-timeout+ 90
   "The number of frames to maintain the farmer's stun status.")
 
 (defparameter +puff-damage+ 1

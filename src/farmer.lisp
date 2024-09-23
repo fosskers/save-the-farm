@@ -33,7 +33,9 @@
 ;; frame.
 (define-handler (farmer tick :before) (fc)
   (let ((nearby-bug (collision-candidate farmer *bugs*)))
-    (when (and nearby-bug (overlapping? farmer nearby-bug))
+    (when (and nearby-bug
+               (not (stunned? farmer))
+               (overlapping? farmer nearby-bug))
       (v:info :stf "Stunned!")
       (leave nearby-bug (container nearby-bug))
       (setf (stunned? farmer) fc)
@@ -43,7 +45,9 @@
            (setf (stunned? farmer) nil)
            (play 'idle farmer)
            (move-farmer farmer))
-          (stunned-frame nil) ; Halts movement if stunned.
+          ;; Case: The farmer is stunned and cannot move.
+          (stunned-frame nil)
+          ;; Case: Everything is fine, move as normal.
           (t (move-farmer farmer)))))
 
 (defun move-farmer (farmer)
