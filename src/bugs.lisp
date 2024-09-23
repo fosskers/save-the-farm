@@ -11,14 +11,17 @@
 ;; --- Types --- ;;
 
 (defclass bug ()
-  ((movement-scheme :initform #'move-straight :accessor movement-scheme)
-   (movement-speed :initform (+ 0.5 (cl:random 0.5)) :accessor movement-speed))
+  ((movement-scheme :accessor movement-scheme)
+   (movement-speed  :accessor movement-speed)
+   (health          :accessor health))
   (:documentation "Behaviour common to all bugs."))
 
 (define-shader-entity bug-fly (bug animated-sprite facing-entity located-entity)
-  ((sprite-data :initform (asset 'farm 'bug-fly))
-   (facing :initform :left :accessor facing)
-   (health :initform 2 :accessor health)))
+  ((sprite-data     :initform (asset 'farm 'bug-fly))
+   (movement-scheme :initform #'move-straight)
+   (movement-speed  :initform (+ 0.5 (cl:random 0.5)))
+   (facing          :initform :left)
+   (health          :initform 2)))
 
 (defmethod min-x ((bug-fly bug-fly))
   (- (vx (location bug-fly)) 7))
@@ -37,12 +40,12 @@
       (decf (health bug) +puff-damage+)
       (leave nearby-puff (container nearby-puff))
       (when (zerop (health bug))
-        (leave bug (container bug))))))
-;; (funcall (movement-scheme bug) bug)
-;; Automatic despawn when out of bounds.
-;; (when (not (in-x-bounds? (max-x bug)))
-;;   (v:info :stf "Bug dead.")
-;;   (leave bug (container bug))))
+        (leave bug (container bug)))))
+  (funcall (movement-scheme bug) bug)
+  ;; Automatic despawn when out of bounds.
+  (when (not (in-x-bounds? (max-x bug)))
+    (v:info :stf "Bug dead.")
+    (leave bug (container bug))))
 
 ;; --- Movement --- ;;
 

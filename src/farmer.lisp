@@ -12,7 +12,7 @@
 
 (define-shader-entity farmer (animated-sprite facing-entity located-entity)
   ((sprite-data :initform (asset 'farm 'farmer))
-   (stunned? :initform nil :accessor stunned?)))
+   (stunned?    :initform nil :accessor stunned?)))
 
 #+nil
 (node :farmer (scene +main+))
