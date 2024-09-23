@@ -15,4 +15,5 @@
                  (:file "collision")
                  (:file "bugs")
                  (:file "farmer")
+                 (:file "level")
                  (:file "main")))))

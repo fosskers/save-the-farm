@@ -1,5 +1,7 @@
 (in-package :save-the-farm)
 
+(defparameter *game-level* +level-1+)
+
 (defclass stf-main (trial-harmony:settings-main)
   ())
 
@@ -55,11 +57,10 @@
   (enter *crops* scene)
   (enter *bugs* scene)
   (enter *puffs* scene)
-  (enter (make-instance 'bug-fly :name :fly0) *bugs*)
-  (enter (make-instance 'bug-fly :name :fly1) *bugs*)
-  (enter (make-instance 'bug-fly :name :fly2) *bugs*)
   (enter (make-instance 'display-controller) scene)
+  (enter *game-level* scene)
   ;; Necessary to prevent a crash when spawning the first puff.
+  (preload (make-instance 'bug-fly) scene)
   (preload (make-instance 'puff) scene))
 
 ;; NOTE: The sidescroll-camera insists on being at the origin. Even if you move
@@ -72,9 +73,6 @@
         (top-right-dot    (node :top-right-dot scene))
         (truly-bottom     (node :truly-bottom-dot scene))
         (truly-top        (node :truly-top-dot scene))
-        (fly0             (node :fly0 scene))
-        (fly1             (node :fly1 scene))
-        (fly2             (node :fly2 scene))
         (farmer           (node :farmer scene)))
     ;; These four dot locations represent the bounds of the (NES) screen.
     ;; Projectiles should:
@@ -89,9 +87,6 @@
     (setf (location top-left-dot) (vec +min-x+ +max-y+ 0))
     (setf (location top-right-dot) (vec +max-x+ +max-y+ 0))
     (setf (location farmer) (grid->pixel 4 7))
-    (setf (location fly0) (grid->pixel 15 7))
-    (setf (location fly1) (grid->pixel 15 12))
-    (setf (location fly2) (grid->pixel 15 3))
     (spawn-crops 'lemon *crops*)
     (observe! (location (node :farmer scene)) :title "Farmer")))
 
@@ -108,7 +103,7 @@
   ;; > all symbols in the keymap are resolved to the ones from our package.
   (let ((*package* #.*package*))
     (load-keymap :reset t)
-    (setf (setting :display :target-framerate) 60)
+    (setf (setting :display :target-framerate) +framerate+)
     ;; Register our custom actions.
     (setf (active-p (action-set 'in-game)) t)
     (apply #'trial:launch 'stf-main args))

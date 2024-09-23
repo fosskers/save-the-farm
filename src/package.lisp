@@ -152,6 +152,8 @@ to be moving to the left."
 
 ;; --- MISC. GLOBALS --- ;;
 
+(defparameter +framerate+ 60)
+
 (defparameter +stun-timeout+ 60
   "The number of frames to maintain the farmer's stun status.")
 
