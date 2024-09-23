@@ -61,13 +61,14 @@
   (observe! (t:transduce #'t:pass #'t:cons *bugs*) :title "Transduced"))
 
 (define-handler (farmer shoot) ()
-  (let* ((loc (vec (vx (location farmer)) (vy (location farmer)) 0))
-         (puff (make-instance 'puff
-                              :location loc
-                              ;; If the farmer is facing left, the puff should move
-                              ;; left, etc.
-                              :facing (facing farmer))))
-    (enter puff *puffs*)))
+  (when (not (stunned? farmer))
+    (let* ((loc (vec (vx (location farmer)) (vy (location farmer)) 0))
+           (puff (make-instance 'puff
+                                :location loc
+                                ;; If the farmer is facing left, the puff should move
+                                ;; left, etc.
+                                :facing (facing farmer))))
+      (enter puff *puffs*))))
 
 (define-handler (farmer kick) ()
   (play 'kick farmer))
