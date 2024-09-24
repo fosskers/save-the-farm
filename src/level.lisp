@@ -23,11 +23,12 @@
      (setf (frame game-level) fc))
     (:running
      (when (zerop (mod fc (spawn-interval game-level)))
-       (let ((bug (make-instance (bug game-level))))
+       ;; FIXME: 2024-09-23 Magic numbers.
+       (let* ((loc (grid->pixel +grid-max-x+ (+ 3 (cl:random 9))))
+              (bug (make-instance (bug game-level) :orig-y (vy loc))))
          ;; (v:info :stf (format nil "Frame: ~a" fc))
          (enter bug *bugs*)
-         ;; FIXME: 2024-09-23 Magic numbers.
-         (setf (location bug) (grid->pixel +grid-max-x+ (+ 2 (cl:random 11)))))))))
+         (setf (location bug) loc))))))
 
 #+nil
 (observe! (slot-value *bugs* 'trial::%count) :title "Bugs")

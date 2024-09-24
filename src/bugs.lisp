@@ -14,7 +14,8 @@
   ((movement-scheme :accessor movement-scheme)
    (movement-speed  :accessor movement-speed)
    (health          :accessor health :documentation "Remaining health of the bug.")
-   (damage          :accessor damage :documentation "Damage dealt to a crop upon contact."))
+   (damage          :accessor damage :documentation "Damage dealt to a crop upon contact.")
+   (orig-y          :accessor orig-y :initarg :orig-y :documentation "The originally assigned Y-value. Used in complex movement equations."))
   (:documentation "Behaviour common to all bugs."))
 
 (define-shader-entity bug-fly (bug animated-sprite facing-entity located-entity)
@@ -37,38 +38,36 @@
 
 ;; --- Handlers --- ;;
 
-(define-handler (bug tick :before) (fc)
+(define-handler (bug tick :before) ()
   (let ((nearby-puff (collision-candidate bug *puffs*)))
     (when (and nearby-puff (overlapping? bug nearby-puff))
       (decf (health bug) +puff-damage+)
       (leave nearby-puff (container nearby-puff))
       (when (<= (health bug) 0)
         (leave bug (container bug)))))
-  (funcall (movement-scheme bug) bug fc)
+  (funcall (movement-scheme bug) bug)
   ;; Automatic despawn when out of bounds.
   (when (not (in-x-bounds? (max-x bug)))
     (leave bug (container bug))))
 
 ;; --- Movement --- ;;
 
-(defun move-straight (bug fc)
+(defun move-straight (bug)
   "Move in a straight line in the bug's current direction."
-  (declare (ignore fc))
   (incf (vx (location bug))
         (if (eq :left (facing bug))
             (* (movement-speed bug) -1)
             (* (movement-speed bug) 1))))
 
-(defun move-sin-wave (bug fc)
+(defun move-sin-wave (bug)
   "Move along a simple sin wave in the bug's current direction."
   (let ((x-diff (if (eq :left (facing bug))
                     (* (movement-speed bug) -1)
                     (* (movement-speed bug) 1)))
-        (y-diff (* 1/2 (sin (* pi 1/64 (vx (location bug)))))))
+        (y-diff (* 16 (sin (* pi 1/32 (vx (location bug)))))))
     (incf (vx (location bug)) x-diff)
-    ;; Clamping Y to the bounds of the field.
-    (when (or (and (> y-diff 0)
-                   (<= (+ y-diff (max-y bug)) +field-max-y+))
-              (and (< y-diff 0)
-                   (>= (+ y-diff (min-y bug)) +field-min-y+)))
-      (incf (vy (location bug)) y-diff))))
+    (let ((new-y (+ y-diff (orig-y bug))))
+      ;; Clamping Y to the bounds of the field.
+      (when (or (<= new-y +field-max-y+)
+                (>= new-y +field-min-y+))
+        (setf (vy (location bug)) new-y)))))
