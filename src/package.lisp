@@ -52,24 +52,24 @@
 (defparameter +grid-max-y+ 14)
 
 ;; The pixel-bounds of the field.
-(defparameter +min-x+ -127)
-(defparameter +max-x+ 128)
-(defparameter +min-y+ -96)
-(defparameter +max-y+ 79)
+(defparameter +field-min-x+ -127)
+(defparameter +field-max-x+ 128)
+(defparameter +field-min-y+ -96)
+(defparameter +field-max-y+ 79)
 
 ;; The pixel-bounds of the NES screen (not the user's window itself).
-(defparameter +screen-min-x+ +min-x+)
-(defparameter +screen-max-x+ +max-x+)
-(defparameter +screen-min-y+ (- +min-y+ 32))
-(defparameter +screen-max-y+ (+ +max-y+ 32))
+(defparameter +screen-min-x+ +field-min-x+)
+(defparameter +screen-max-x+ +field-max-x+)
+(defparameter +screen-min-y+ (- +field-min-y+ 32))
+(defparameter +screen-max-y+ (+ +field-max-y+ 32))
 
 (defun in-x-bounds? (x)
   "Is a given X location within the bounds of the entire field?"
-  (< +min-x+ x +max-x+))
+  (< +field-min-x+ x +field-max-x+))
 
-;; (defun in-y-bounds? (y)
-;;   "Is a given Y location within the bounds of the entire field?"
-;;   (<= +min-y+ y +max-y+))
+(defun in-y-bounds? (y)
+  "Is a given Y location within the bounds of the entire field?"
+  (< +field-min-y+ y +field-max-y+))
 
 (defun pixel->grid (x y)
   "Given XY pixel coordinates, determine where on the 16x15 grid it is."
