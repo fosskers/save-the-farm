@@ -77,10 +77,6 @@
 always move toward him."
   (move-at (node :farmer (scene +main+))))
 
-;; FIXME: What happens when the crop gets eaten first by another bug?
-;;
-;; Ok it doesn't crash at least - the bugs just reach their destination and
-;; start to jitter.
 (defun move-at-crop ()
   "Yield a lambda that captures the `location' of a random crop and has the bug
 always move toward it."
@@ -101,22 +97,28 @@ bug try to always move toward it."
       ;; (1) Overall, the bug is seeing where the entity is and shifts its
       ;; direction to between its current heading and where the entity stands.
       (let* ((bet-x (- (vx loc) (vx (location bug))))
-             (bet-y (- (vy loc) (vy (location bug))))
-             ;; (2) The vector between the bug's current heading and a straight
-             ;; line from it to the entity.
-             (avg-x (/ (+ bet-x (vx vtr)) 2))
-             (avg-y (/ (+ bet-y (vy vtr)) 2))
-             ;; (3) Renormalize.
-             (mag   (sqrt (+ (expt avg-x 2) (expt avg-y 2))))
-             (nor-x (/ avg-x mag))
-             (nor-y (/ avg-y mag))
-             ;; (4) Slow the bug back down or he zooms towards the target.
-             (slo-x (* (movement-speed bug) nor-x))
-             (slo-y (* (movement-speed bug) nor-y)))
-        (setf (vx vtr) slo-x)
-        (setf (vy vtr) slo-y)
-        (incf (vx (location bug)) slo-x)
-        (incf (vy (location bug)) slo-y)))))
+             (bet-y (- (vy loc) (vy (location bug)))))
+        ;; (2) If the bug is close enough, don't attempt to course-correct. This
+        ;; creates a "hovering" effect where the bug initially goes too far,
+        ;; then turns back around.
+        (if (<= (sqrt (+ (expt bet-x 2) (expt bet-y 2))) 16)
+            (progn (incf (vx (location bug)) (vx vtr))
+                   (incf (vy (location bug)) (vy vtr)))
+            ;; (3) The vector between the bug's current heading and a straight
+            ;; line from it to the entity.
+            (let* ((avg-x (/ (+ bet-x (vx vtr)) 2))
+                   (avg-y (/ (+ bet-y (vy vtr)) 2))
+                   ;; (4) Renormalize.
+                   (mag   (sqrt (+ (expt avg-x 2) (expt avg-y 2))))
+                   (nor-x (/ avg-x mag))
+                   (nor-y (/ avg-y mag))
+                   ;; (5) Slow the bug back down or he zooms towards the target.
+                   (slo-x (* (movement-speed bug) nor-x))
+                   (slo-y (* (movement-speed bug) nor-y)))
+              (setf (vx vtr) slo-x)
+              (setf (vy vtr) slo-y)
+              (incf (vx (location bug)) slo-x)
+              (incf (vy (location bug)) slo-y)))))))
 
 #+nil
 (let* ((loc (grid->pixel +grid-max-x+ 7))
