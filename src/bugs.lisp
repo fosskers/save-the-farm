@@ -71,3 +71,37 @@
       (when (or (<= new-y +field-max-y+)
                 (>= new-y +field-min-y+))
         (setf (vy (location bug)) new-y)))))
+
+(defun move-at-farmer ()
+  "Yield a lambda that captures the `location' of the farmer and has the bug try to
+always move toward him."
+  (let ((loc (location (node :farmer (scene +main+))))
+        ;; A normal vector that represents the bug's "heading". See below.
+        (vtr (vec -1 0)))
+    (lambda (bug)
+      ;; (1) Overall, the bug is seeing where the farmer is and shifts its
+      ;; direction to between its current heading and where the farmer stands.
+      (let* ((bet-x (- (vx loc) (vx (location bug))))
+             (bet-y (- (vy loc) (vy (location bug))))
+             ;; (2) The vector between the bug's current heading and a straight
+             ;; line from it to the farmer.
+             (avg-x (/ (+ bet-x (vx vtr)) 2))
+             (avg-y (/ (+ bet-y (vy vtr)) 2))
+             (mag   (sqrt (+ (expt avg-x 2) (expt avg-y 2))))
+             ;; (3) Renormalize.
+             (nor-x (/ avg-x mag))
+             (nor-y (/ avg-y mag))
+             ;; (4) Slow the bug back down or he zooms towards the farmer.
+             (slo-x (* (movement-speed bug) nor-x))
+             (slo-y (* (movement-speed bug) nor-y)))
+        (setf (vx vtr) slo-x)
+        (setf (vy vtr) slo-y)
+        (incf (vx (location bug)) slo-x)
+        (incf (vy (location bug)) slo-y)))))
+
+#+nil
+(let* ((loc (grid->pixel +grid-max-x+ 7))
+       (bug (make-instance 'bug-fly :orig-y (vy (location loc)))))
+  (setf (movement-scheme bug) (move-at-farmer))
+  (enter bug *bugs*)
+  (setf (location bug) loc))
