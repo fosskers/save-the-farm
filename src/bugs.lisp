@@ -75,23 +75,42 @@
 (defun move-at-farmer ()
   "Yield a lambda that captures the `location' of the farmer and has the bug try to
 always move toward him."
-  (let ((loc (location (node :farmer (scene +main+))))
+  (move-at (node :farmer (scene +main+))))
+
+;; FIXME: What happens when the crop gets eaten first by another bug?
+;;
+;; Ok it doesn't crash at least - the bugs just reach their destination and
+;; start to jitter.
+(defun move-at-crop ()
+  "Yield a lambda that captures the `location' of a random crop and has the bug
+always move toward it."
+  (if (zerop (length *crops*))
+      #'move-straight
+      (let* ((ix (cl:random (length *crops*)))
+             ;; HACK: 2024-09-26 Direct access to inner vector.
+             (entity (aref (slot-value *crops* 'trial::%objects) ix)))
+        (move-at entity))))
+
+(defun move-at (thing)
+  "Yield a lambda that captures the `location' of some located entity and has the
+bug try to always move toward it."
+  (let ((loc (location thing))
         ;; A normal vector that represents the bug's "heading". See below.
         (vtr (vec -1 0)))
     (lambda (bug)
-      ;; (1) Overall, the bug is seeing where the farmer is and shifts its
-      ;; direction to between its current heading and where the farmer stands.
+      ;; (1) Overall, the bug is seeing where the entity is and shifts its
+      ;; direction to between its current heading and where the entity stands.
       (let* ((bet-x (- (vx loc) (vx (location bug))))
              (bet-y (- (vy loc) (vy (location bug))))
              ;; (2) The vector between the bug's current heading and a straight
-             ;; line from it to the farmer.
+             ;; line from it to the entity.
              (avg-x (/ (+ bet-x (vx vtr)) 2))
              (avg-y (/ (+ bet-y (vy vtr)) 2))
-             (mag   (sqrt (+ (expt avg-x 2) (expt avg-y 2))))
              ;; (3) Renormalize.
+             (mag   (sqrt (+ (expt avg-x 2) (expt avg-y 2))))
              (nor-x (/ avg-x mag))
              (nor-y (/ avg-y mag))
-             ;; (4) Slow the bug back down or he zooms towards the farmer.
+             ;; (4) Slow the bug back down or he zooms towards the target.
              (slo-x (* (movement-speed bug) nor-x))
              (slo-y (* (movement-speed bug) nor-y)))
         (setf (vx vtr) slo-x)
@@ -102,6 +121,9 @@ always move toward him."
 #+nil
 (let* ((loc (grid->pixel +grid-max-x+ 7))
        (bug (make-instance 'bug-fly :orig-y (vy (location loc)))))
-  (setf (movement-scheme bug) (move-at-farmer))
+  (setf (movement-scheme bug) (move-at-crop))
   (enter bug *bugs*)
   (setf (location bug) loc))
+
+#+nil
+(maybe-reload-scene)
