@@ -77,11 +77,12 @@
 (define-handler (farmer kick) ()
   (play 'kick farmer))
 
-(define-handler (farmer reset) ()
-  (v:info :stf "Resetting farmer position.")
-  (setf (location farmer) (vec 0 0 0)))
+(define-handler (farmer pause) ()
+  (v:info :stf "Pausing.")
+  (break))
 
 ;; TODO: 2024-09-06 Just for debugging - eventually remove.
+#+nil
 (define-handler (farmer gamepad-press :after) (button)
   (v:info :stf "Button: ~a, Type: ~a" button (type-of button)))
 

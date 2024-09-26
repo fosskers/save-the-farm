@@ -15,5 +15,5 @@
          (button :one-of (:b))
          (key :one-of (:f)))
 
-(trigger reset
-         (button :one-of (:y)))
+(trigger pause
+         (button :one-of (:start)))

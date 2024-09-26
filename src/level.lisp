@@ -5,6 +5,11 @@
 #+nil
 (launch)
 
+#+nil
+(maybe-reload-scene)
+
+;; --- Types --- ;;
+
 (defclass game-level (scene-node listener)
   ((level :initarg :level    :reader level)
    (bug   :initarg :bug      :reader bug)
@@ -13,8 +18,7 @@
    (spawn-interval :initarg :spawn-interval :reader spawn-interval))
   (:documentation "A game level in which bugs are spawned, usually lasting 20 seconds."))
 
-(defparameter +level-1+
-  (make-instance 'game-level :level 1 :bug 'bug-fly :spawn-interval 60))
+;; --- Handlers --- ;;
 
 (define-handler (game-level tick) (fc)
   (case (state game-level)
@@ -25,10 +29,23 @@
      (when (zerop (mod fc (spawn-interval game-level)))
        ;; FIXME: 2024-09-23 Magic numbers.
        (let* ((loc (grid->pixel +grid-max-x+ (+ 3 (cl:random 9))))
-              (bug (make-instance (bug game-level) :orig-y (vy loc))))
+              (bug (make-instance (bug game-level) :orig-y (vy loc)))
+              (mov (case (cl:random 4)
+                     (0 #'move-straight)
+                     (1 #'move-sin-wave)
+                     (2 (move-at-crop))
+                     (3 (move-at-farmer)))))
          ;; (v:info :stf (format nil "Frame: ~a" fc))
          (enter bug *bugs*)
-         (setf (location bug) loc))))))
+         (setf (location bug) loc)
+         (setf (movement-scheme bug) mov))))))
 
 #+nil
 (observe! (slot-value *bugs* 'trial::%count) :title "Bugs")
+
+;; --- Misc. --- ;;
+
+(defun start-level (level)
+  "Spawn a designated level."
+  (case level
+    (:level-1 (make-instance 'game-level :level 1 :bug 'bug-fly :spawn-interval 120))))

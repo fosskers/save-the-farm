@@ -12,26 +12,26 @@
 
 (setf +app-system+ "save-the-farm")
 
-;; --- ASSETS --- ;;
+;; --- Assets --- ;;
 
 (define-pool farm :base #p"../../data/")
-(define-asset (farm lemon) sprite-data #p"sprites/lemon.json")
-(define-asset (farm farmer) sprite-data #p"sprites/farmer.json")
+(define-asset (farm lemon)      sprite-data #p"sprites/lemon.json")
+(define-asset (farm farmer)     sprite-data #p"sprites/farmer.json")
 (define-asset (farm origin-dot) sprite-data #p"sprites/dot.json")
-(define-asset (farm puff) sprite-data #p"sprites/puff.json")
-(define-asset (farm grid-test) sprite-data #p"sprites/grid-test.json")
-(define-asset (farm bug-fly) sprite-data #p"sprites/bug-fly.json")
-(define-asset (farm tilemap) tile-data #p"map/field.tmj")
+(define-asset (farm puff)       sprite-data #p"sprites/puff.json")
+(define-asset (farm grid-test)  sprite-data #p"sprites/grid-test.json")
+(define-asset (farm bug-fly)    sprite-data #p"sprites/bug-fly.json")
+(define-asset (farm tilemap)    tile-data   #p"map/field.tmj")
 
-;; --- ACTIONS --- ;;
+;; --- Actions --- ;;
 
 (define-action-set in-game)
-(define-action move (directional-action in-game))
+(define-action move  (directional-action in-game))
 (define-action shoot (in-game))
-(define-action kick (in-game))
-(define-action reset (in-game))
+(define-action kick  (in-game))
+(define-action pause (in-game))
 
-;; --- GLOBAL CONTAINERS --- ;;
+;; --- Global Containers --- ;;
 
 ;; As "bags" these become official Trial "node containers" and can be injected
 ;; into the scene. By keeping a global reference to them as well, we can easily
@@ -41,10 +41,10 @@
 ;; The farmer himself is a simpler case and doesn't require a global; he can
 ;; easily be obtained via the `node' function and his name `:farmer'.
 (defparameter *crops* nil)
-(defparameter *bugs* nil)
+(defparameter *bugs*  nil)
 (defparameter *puffs* nil)
 
-;; --- GRID AND PIXEL COORDINATES --- ;;
+;; --- Grid and Pixel Coordinates --- ;;
 
 (defparameter +grid-min-x+ 0)
 (defparameter +grid-max-x+ 15)
@@ -138,7 +138,7 @@ is considered out of bounds, thus preventing movement."
 is considered out of bounds, thus preventing movement."
   (< +aisle-min-y+ y +aisle-max-y+))
 
-;; --- ENTITIES --- ;;
+;; --- Entities --- ;;
 
 (defclass facing-entity (scaled-entity)
   ((facing :initarg :facing :initform :right :accessor facing))
@@ -155,7 +155,7 @@ to be moving to the left."
   (cond ((> (vx movement) 0) (setf (facing entity) :right))
         ((< (vx movement) 0) (setf (facing entity) :left))))
 
-;; --- MISC. GLOBALS --- ;;
+;; --- Misc. Globals --- ;;
 
 (defparameter +framerate+ 60)
 
@@ -164,3 +164,10 @@ to be moving to the left."
 
 (defparameter +puff-damage+ 1
   "The amount of damage inflicted by a farmer's gas puff.")
+
+;; --- Utilities --- ;;
+
+(defun random-elt (vector)
+  "Yield a random element from a vector."
+  (let ((ix (cl:random (length vector))))
+    (aref vector ix)))

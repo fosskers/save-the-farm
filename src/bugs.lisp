@@ -20,8 +20,8 @@
 
 (define-shader-entity bug-fly (bug animated-sprite facing-entity located-entity)
   ((sprite-data     :initform (asset 'farm 'bug-fly))
-   ;; (movement-scheme :initform #'move-straight)
-   (movement-scheme :initform #'move-sin-wave)
+   (movement-scheme :initform #'move-straight)
+   ;; (movement-scheme :initform #'move-sin-wave)
    (movement-speed  :initform (+ 0.25 (cl:random 0.25)))
    (facing          :initform :left)
    (health          :initform 2)
