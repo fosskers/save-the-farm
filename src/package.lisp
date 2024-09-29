@@ -21,6 +21,7 @@
 (define-asset (farm puff)       sprite-data #p"sprites/puff.json")
 (define-asset (farm grid-test)  sprite-data #p"sprites/grid-test.json")
 (define-asset (farm bug-fly)    sprite-data #p"sprites/bug-fly.json")
+(define-asset (farm numbers)    sprite-data #p"sprites/numbers.json")
 (define-asset (farm tilemap)    tile-data   #p"map/field.tmj")
 
 ;; --- Actions --- ;;
@@ -164,6 +165,9 @@ to be moving to the left."
 
 (defparameter +puff-damage+ 1
   "The amount of damage inflicted by a farmer's gas puff.")
+
+(defparameter *score* 0
+  "The player's current score.")
 
 ;; --- Utilities --- ;;
 

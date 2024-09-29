@@ -1,23 +1,22 @@
 (in-package :save-the-farm)
 
+#+nil
+(launch)
+
+#+nil
+(maybe-reload-scene)
+
 (defclass stf-main (trial-harmony:settings-main)
   ())
 
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
 
-#+nil
-(defun moved? (movement)
-  "Did movement occur since the last tick?"
-  (or (> (vx movement) 0)
-      (< (vx movement) 0)
-      (> (vy movement) 0)
-      (< (vy movement) 0)))
-
 (defmethod setup-scene ((main stf-main) scene)
   (setf *crops* (make-instance 'bag))
-  (setf *bugs* (make-instance 'bag))
+  (setf *bugs*  (make-instance 'bag))
   (setf *puffs* (make-instance 'bag))
+  (setf *score* 0)
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap) :name :field) scene)
   (enter (make-instance 'dot :name :origin-dot) scene)
   (enter (make-instance 'dot :name :bottom-left-dot) scene)
@@ -32,6 +31,7 @@
   (enter (make-instance 'sidescroll-camera :zoom 3.0 :name :camera) scene)
   (enter (make-instance 'render-pass) scene)
   (enter (make-instance 'farmer :name :farmer) scene)
+  (enter (make-instance 'digit :name :digit) scene)
   (enter *crops* scene)
   (enter *bugs* scene)
   (enter *puffs* scene)
@@ -39,7 +39,8 @@
   (enter (start-level :level-1) scene)
   ;; Necessary to prevent a crash when spawning the first puff.
   (preload (make-instance 'bug-fly) scene)
-  (preload (make-instance 'puff) scene))
+  (preload (make-instance 'puff) scene)
+  (preload (make-instance 'digit) scene))
 
 ;; NOTE: The sidescroll-camera insists on being at the origin. Even if you move
 ;; it here, it automatically glides back to the origin across the next second or
@@ -51,7 +52,8 @@
         (top-right-dot    (node :top-right-dot scene))
         (truly-bottom     (node :truly-bottom-dot scene))
         (truly-top        (node :truly-top-dot scene))
-        (farmer           (node :farmer scene)))
+        (farmer           (node :farmer scene))
+        (digit            (node :digit scene)))
     ;; These four dot locations represent the bounds of the (NES) screen.
     ;; Projectiles should:
     ;;
@@ -65,6 +67,7 @@
     (setf (location top-left-dot) (vec +field-min-x+ +field-max-y+ 0))
     (setf (location top-right-dot) (vec +field-max-x+ +field-max-y+ 0))
     (setf (location farmer) (grid->pixel 4 7))
+    (setf (location digit) (grid->pixel 15 1))
     (spawn-crops 'lemon *crops*)
     (observe! (location (node :farmer scene)) :title "Farmer")))
 
@@ -86,12 +89,3 @@
     (setf (active-p (action-set 'in-game)) t)
     (apply #'trial:launch 'stf-main args))
   (v:info :stf "Exiting launch function."))
-
-#+nil
-(launch)
-
-#+nil
-(maybe-reload-scene)
-
-#+nil
-(scene +main+)
