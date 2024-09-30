@@ -3,6 +3,9 @@
 #+nil
 (launch)
 
+#+nil
+(maybe-reload-scene)
+
 ;; --- Types --- ;;
 
 (define-shader-entity digit (animated-sprite located-entity)
@@ -10,12 +13,36 @@
    (value       :initform 0 :accessor value :documentation "The digit's true inner value."))
   (:documentation "A digit to be displayed on the screen."))
 
+(define-shader-entity score (listener)
+  ((digits :initform (vector (make-instance 'digit)
+                             (make-instance 'digit)
+                             (make-instance 'digit)
+                             (make-instance 'digit)
+                             (make-instance 'digit)
+                             (make-instance 'digit)
+                             (make-instance 'digit))
+           :accessor digits)
+   (score  :initform 0 :accessor score))
+  (:documentation "The player's current score."))
+
+(defun spawn-score (scene location)
+  "Spawn and move the digits of a score board to a given LOCATION."
+  (let ((score (make-instance 'score))
+        (y (vy location)))
+    (enter score scene)
+    (t:transduce #'t:pass
+                 (t:fold (lambda (x digit)
+                           (enter digit scene)
+                           (setf (vx (location digit)) x)
+                           (setf (vy (location digit)) y)
+                           (+ 8 x))
+                         (vx location))
+                 (digits score))
+    score))
+
 ;; --- Handlers --- ;;
 
 (define-handler (digit tick :before) ()
-  ;; Testing
-  (let ((digit (node :digit (container digit))))
-    (setf (value digit) (length *bugs*)))
   (play (number->animation (value digit)) digit))
 
 (defun number->animation (n)
