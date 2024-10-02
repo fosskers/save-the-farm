@@ -42,7 +42,9 @@
 
 ;; --- Handlers --- ;;
 
-(define-handler (score tick) ()
+(define-handler (score tick) (fc)
+  (when (zerop (mod fc +framerate+))
+    (incf (score score) 1))
   (t:transduce #'t:pass
                (t:fold (lambda (acc digit)
                          (multiple-value-bind (next this) (floor acc 10)
