@@ -126,8 +126,8 @@ In other words, the common Y value of the top side of its bounding box."
 ;; The pixel-bounds of the farmer's walkable area; his "aisle".
 (defparameter +aisle-min-x+ (grid->min-x 4))
 (defparameter +aisle-max-x+ (grid->max-x 6))
-(defparameter +aisle-min-y+ (grid->min-y 2))
-(defparameter +aisle-max-y+ (grid->max-y 12))
+(defparameter +aisle-min-y+ (grid->min-y 3))
+(defparameter +aisle-max-y+ (grid->max-y 11))
 
 (defun in-aisle-x-bounds? (x)
   "Is a given X location within the bounds of the farmer's walkable aisle? Touching

@@ -17,13 +17,13 @@
   (setf *bugs*  (make-instance 'bag))
   (setf *puffs* (make-instance 'bag))
   (enter (make-instance 'tile-layer :tile-data (asset 'farm 'tilemap) :name :field) scene)
-  (enter (make-instance 'dot :name :origin-dot) scene)
-  (enter (make-instance 'dot :name :bottom-left-dot) scene)
-  (enter (make-instance 'dot :name :bottom-right-dot) scene)
-  (enter (make-instance 'dot :name :top-left-dot) scene)
-  (enter (make-instance 'dot :name :top-right-dot) scene)
-  (enter (make-instance 'dot :name :truly-bottom-dot) scene)
-  (enter (make-instance 'dot :name :truly-top-dot) scene)
+  ;; (enter (make-instance 'dot :name :origin-dot) scene)
+  ;; (enter (make-instance 'dot :name :bottom-left-dot) scene)
+  ;; (enter (make-instance 'dot :name :bottom-right-dot) scene)
+  ;; (enter (make-instance 'dot :name :top-left-dot) scene)
+  ;; (enter (make-instance 'dot :name :top-right-dot) scene)
+  ;; (enter (make-instance 'dot :name :truly-bottom-dot) scene)
+  ;; (enter (make-instance 'dot :name :truly-top-dot) scene)
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
@@ -44,12 +44,13 @@
 ;; it here, it automatically glides back to the origin across the next second or
 ;; so.
 (defmethod setup-scene :after ((main stf-main) scene)
-  (let ((bottom-left-dot  (node :bottom-left-dot scene))
-        (bottom-right-dot (node :bottom-right-dot scene))
-        (top-left-dot     (node :top-left-dot scene))
-        (top-right-dot    (node :top-right-dot scene))
-        (truly-bottom     (node :truly-bottom-dot scene))
-        (truly-top        (node :truly-top-dot scene))
+  (let (
+        ;; (bottom-left-dot  (node :bottom-left-dot scene))
+        ;; (bottom-right-dot (node :bottom-right-dot scene))
+        ;; (top-left-dot     (node :top-left-dot scene))
+        ;; (top-right-dot    (node :top-right-dot scene))
+        ;; (truly-bottom     (node :truly-bottom-dot scene))
+        ;; (truly-top        (node :truly-top-dot scene))
         (farmer           (node :farmer scene)))
     ;; These four dot locations represent the bounds of the (NES) screen.
     ;; Projectiles should:
@@ -57,15 +58,15 @@
     ;; - Not render past the edge of the map, culling gradually as their pixels
     ;; pass the edge.
     ;; - Fully despawn when ther left-most pixels have passed beyond the edge.
-    (setf (location truly-bottom) (vec +screen-min-x+ +screen-min-y+ 0))
-    (setf (location truly-top) (vec +screen-max-x+ +screen-max-y+ 0))
-    (setf (location bottom-left-dot) (vec +field-min-x+ +field-min-y+ 0))
-    (setf (location bottom-right-dot) (vec +field-max-x+ +field-min-y+ 0))
-    (setf (location top-left-dot) (vec +field-min-x+ +field-max-y+ 0))
-    (setf (location top-right-dot) (vec +field-max-x+ +field-max-y+ 0))
+    ;; (setf (location truly-bottom) (vec +screen-min-x+ +screen-min-y+ 0))
+    ;; (setf (location truly-top) (vec +screen-max-x+ +screen-max-y+ 0))
+    ;; (setf (location bottom-left-dot) (vec +field-min-x+ +field-min-y+ 0))
+    ;; (setf (location bottom-right-dot) (vec +field-max-x+ +field-min-y+ 0))
+    ;; (setf (location top-left-dot) (vec +field-min-x+ +field-max-y+ 0))
+    ;; (setf (location top-right-dot) (vec +field-max-x+ +field-max-y+ 0))
     (setf (location farmer) (grid->pixel 4 7))
     (spawn-crops 'lemon *crops*)
-    (setf *score* (spawn-score scene (grid->pixel 12 1)))
+    (setf *score* (spawn-score scene (grid->pixel 12 14)))
     (observe! (location (node :farmer scene)) :title "Farmer")))
 
 (defmethod setup-rendering :after ((main stf-main))
