@@ -42,6 +42,15 @@
 
 ;; --- Handlers --- ;;
 
+(define-handler (score tick) ()
+  (t:transduce #'t:pass
+               (t:fold (lambda (acc digit)
+                         (multiple-value-bind (next this) (floor acc 10)
+                           (setf (value digit) this)
+                           next))
+                       (score score))
+               (t:reversed (digits score))))
+
 (define-handler (digit tick :before) ()
   (play (number->animation (value digit)) digit))
 

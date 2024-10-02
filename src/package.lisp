@@ -166,7 +166,7 @@ to be moving to the left."
 (defparameter +puff-damage+ 1
   "The amount of damage inflicted by a farmer's gas puff.")
 
-(defparameter *score* 0
+(defparameter *score* nil
   "The player's current score.")
 
 ;; --- Utilities --- ;;

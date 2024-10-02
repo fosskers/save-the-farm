@@ -44,7 +44,8 @@
       (decf (health bug) +puff-damage+)
       (leave nearby-puff (container nearby-puff))
       (when (<= (health bug) 0)
-        (leave bug (container bug)))))
+        (leave bug (container bug))
+        (incf (score *score*) 100))))
   (funcall (movement-scheme bug) bug)
   ;; Automatic despawn when out of bounds.
   (when (not (in-x-bounds? (max-x bug)))
