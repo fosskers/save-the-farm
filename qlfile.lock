@@ -5,14 +5,14 @@
 ("shirakumo" .
  (:class qlot/source/dist:source-dist
   :initargs (:distribution "https://dist.shirakumo.org/shirakumo.txt" :%version :latest)
-  :version "2024.08.23-09.22.48"))
+  :version "2024.10.01-19.36.28"))
 ("trial" .
  (:class qlot/source/local:source-local
   :initargs (:path "/home/colin/code/common-lisp/trial")))
 ("transducers" .
  (:class qlot/source/git:source-git
   :initargs (:remote-url "https://codeberg.org/fosskers/cl-transducers.git")
-  :version "git-c846a1547a28f43a055869e089ec1eede6b1d22a"))
+  :version "git-49724e525922314e543129d75904e6152bad0ff8"))
 ("fset" .
  (:class qlot/source/git:source-git
   :initargs (:remote-url "https://gitlab.common-lisp.net/fset/fset.git")
