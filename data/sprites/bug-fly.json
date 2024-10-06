@@ -29,8 +29,7 @@
    { "name": "Creeping", "from": 0, "to": 1, "direction": "forward", "color": "#000000ff" }
   ],
   "layers": [
-   { "name": "Bug", "opacity": 255, "blendMode": "normal" },
-   { "name": "Bounding Box", "opacity": 255, "blendMode": "normal" }
+   { "name": "Bug", "opacity": 255, "blendMode": "normal" }
   ],
   "slices": [
   ]
