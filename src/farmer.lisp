@@ -76,7 +76,9 @@
 
 (defun shoot-puff (farmer)
   (when (not (stunned? farmer))
-    (let* ((loc (vec (vx (location farmer)) (vy (location farmer)) 0))
+    (let* ((loc (vec (+ 5 (vx (location farmer)))
+                     (vy (location farmer))
+                     0))
            (puff (make-instance 'puff
                                 :location loc
                                 ;; If the farmer is facing left, the puff should move
@@ -107,13 +109,13 @@
 
 ;; Confirmed via the "rainbow grid" test sprite and pencil-and-paper.
 (defmethod min-x ((farmer farmer))
-  (- (vx (location farmer)) 7))
+  (- (vx (location farmer)) 4))
 (defmethod max-x ((farmer farmer))
-  (+ 8 (vx (location farmer))))
+  (+ 5 (vx (location farmer))))
 (defmethod min-y ((farmer farmer))
-  (- (vy (location farmer)) 8))
+  (- (vy (location farmer)) 7))
 (defmethod max-y ((farmer farmer))
-  (+ 7 (vy (location farmer))))
+  (+ 6 (vy (location farmer))))
 
 ;; TODO: 2024-09-18 Move these.
 (defmethod min-x ((puff puff))

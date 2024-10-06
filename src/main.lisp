@@ -27,14 +27,14 @@
   ;; NOTE: No need to manually setf the camera slot of the `scene', as an
   ;; `:after' defmethod on camera+scene already does this.
   ;; (enter (make-instance 'sidescroll-camera :zoom 5.0 :target (node :farmer scene)) scene)
-  (enter (make-instance 'sidescroll-camera :zoom 3.0 :name :camera) scene)
+  (enter (make-instance 'sidescroll-camera :zoom 4.0 :name :camera) scene)
   (enter (make-instance 'render-pass) scene)
   (enter (make-instance 'farmer :name :farmer) scene)
   (enter *crops* scene)
   (enter *bugs* scene)
   (enter *puffs* scene)
-  (enter (make-instance 'display-controller) scene)
-  (enter (start-level :level-1) scene)
+  ;; (enter (make-instance 'display-controller) scene)
+  ;; (enter (start-level :level-1) scene)
   ;; Necessary to prevent a crash when spawning the first puff.
   (preload (make-instance 'bug-fly) scene)
   (preload (make-instance 'puff) scene)
