@@ -10,7 +10,7 @@
 
 ;; --- Types --- ;;
 
-(defclass game-level (scene-node listener)
+(defclass game-level (entity listener)
   ((level :initarg :level    :reader level)
    (bug   :initarg :bug      :reader bug)
    (state :initform :pending :accessor state)
@@ -50,4 +50,15 @@
 (defun start-level (level)
   "Spawn a designated level."
   (case level
-    (:level-1 (make-instance 'game-level :level 1 :bug 'bug-fly :spawn-interval 120))))
+    (:level-1 (make-instance 'game-level :level 1 :bug 'bug-fly :spawn-interval 120 :name :level))))
+
+(defun game-over ()
+  "End the game."
+  (let ((scene (scene +main+)))
+    (clear *bugs*)
+    (leave (node :farmer scene) scene)
+    (leave (node :level scene) scene)
+    (setf *game-over* t)))
+
+#+nil
+(game-over)

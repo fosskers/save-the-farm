@@ -2,6 +2,12 @@
 
 (in-package :save-the-farm)
 
+#+nil
+(launch)
+
+#+nil
+(maybe-reload-scene)
+
 ;; --- Types --- ;;
 
 (defclass crop ()
@@ -29,7 +35,9 @@
       (decf (health crop) (damage nearby-bug))
       (leave nearby-bug (container nearby-bug))
       (when (<= (health crop) 0)
-        (leave crop (container crop))))))
+        (leave crop (container crop))
+        (when (zerop (length *crops*))
+          (game-over))))))
 
 ;; --- Misc. --- ;;
 

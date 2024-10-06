@@ -21,11 +21,12 @@ part of the map."
   (dotimes (n 16)
     (let ((post (make-instance 'post))
           (loc  (grid->pixel n 2)))
-      (incf (vy loc) 12)
+      (incf (vy loc) 11)
       (enter post scene)
       (setf (location post) loc))))
 
 (defmethod setup-scene ((main stf-main) scene)
+  (setf *game-over* nil)
   (setf *crops* (make-instance 'bag))
   (setf *bugs*  (make-instance 'bag))
   (setf *puffs* (make-instance 'bag))

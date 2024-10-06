@@ -13,7 +13,10 @@
 
 (trigger shoot
          (button :one-of (:b))
-         (key :one-of (:f)))
+         (key :one-of (:space)))
 
 (trigger pause
+         (button :one-of (:select)))
+
+(trigger start
          (button :one-of (:start)))

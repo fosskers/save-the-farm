@@ -43,8 +43,13 @@
 ;; --- Handlers --- ;;
 
 (define-handler (score tick) (fc)
-  (when (zerop (mod fc +framerate+))
-    (incf (score score) 1))
+  (cond (*game-over* nil)
+        (t (when (zerop (mod fc +framerate+))
+             (incf (score score) 1)
+             (set-digits score)))))
+
+(defun set-digits (score)
+  "Set the individual digits of the current total score."
   (t:transduce #'t:pass
                (t:fold (lambda (acc digit)
                          (multiple-value-bind (next this) (floor acc 10)

@@ -32,6 +32,7 @@
 (define-action shoot (in-game))
 (define-action kick  (in-game))
 (define-action pause (in-game))
+(define-action start (in-game))
 
 ;; --- Global Containers --- ;;
 
@@ -169,6 +170,9 @@ to be moving to the left."
 
 (defparameter *score* nil
   "The player's current score.")
+
+(defparameter *game-over* nil
+  "Is the game over?")
 
 ;; --- Utilities --- ;;
 

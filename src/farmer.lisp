@@ -89,9 +89,13 @@
 (define-handler (farmer kick) ()
   (play 'kick farmer))
 
-(define-handler (farmer pause) ()
+(define-handler (scene pause) ()
   (v:info :stf "Pausing.")
   (break))
+
+(define-handler (scene start) ()
+  (when *game-over*
+    (maybe-reload-scene)))
 
 ;; TODO: 2024-09-06 Just for debugging - eventually remove.
 #+nil
