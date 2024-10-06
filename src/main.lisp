@@ -9,8 +9,21 @@
 (defclass stf-main (trial-harmony:settings-main)
   ())
 
+(define-shader-entity post (animated-sprite located-entity)
+  ((sprite-data :initform (asset 'farm 'post))))
+
 (define-shader-entity dot (animated-sprite located-entity)
   ((sprite-data :initform (asset 'farm 'origin-dot))))
+
+(defun spawn-posts (scene)
+  "Spawn in the posts at the bottom of the field in a way that makes them look like
+part of the map."
+  (dotimes (n 16)
+    (let ((post (make-instance 'post))
+          (loc  (grid->pixel n 2)))
+      (incf (vy loc) 12)
+      (enter post scene)
+      (setf (location post) loc))))
 
 (defmethod setup-scene ((main stf-main) scene)
   (setf *crops* (make-instance 'bag))
@@ -66,6 +79,7 @@
     ;; (setf (location top-right-dot) (vec +field-max-x+ +field-max-y+ 0))
     (setf (location farmer) (grid->pixel 4 7))
     (spawn-crops 'lemon *crops*)
+    (spawn-posts scene)
     (setf *score* (spawn-score scene (grid->pixel 12 14)))
     (observe! (location (node :farmer scene)) :title "Farmer")))
 
