@@ -19,7 +19,7 @@
 (defmethod min-y ((lemon lemon))
   (- (vy (location lemon)) 8))
 (defmethod max-y ((lemon lemon))
-  (+ 7 (vy (location lemon))))
+  (+ 6 (vy (location lemon))))
 
 ;; --- Handlers --- ;;
 
