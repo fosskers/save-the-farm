@@ -44,11 +44,13 @@
     (cond ((and stunned-frame (> (- fc stunned-frame) +stun-timeout+))
            (setf (stunned? farmer) nil)
            (play 'idle farmer)
-           (move-farmer farmer))
+           (move-farmer farmer)
+           (maybe-shoot-puff farmer fc))
           ;; Case: The farmer is stunned and cannot move.
           (stunned-frame nil)
           ;; Case: Everything is fine, move as normal.
-          (t (move-farmer farmer)))))
+          (t (move-farmer farmer)
+             (maybe-shoot-puff farmer fc)))))
 
 (defun move-farmer (farmer)
   (let ((movement (directional 'move)))
@@ -65,6 +67,14 @@
   (observe! (t:transduce #'t:pass #'t:cons *bugs*) :title "Transduced"))
 
 (define-handler (farmer shoot) ()
+  (shoot-puff farmer))
+
+(defun maybe-shoot-puff (farmer fc)
+  (when (and (retained 'shoot)
+             (zerop (mod fc 30)))
+    (shoot-puff farmer)))
+
+(defun shoot-puff (farmer)
   (when (not (stunned? farmer))
     (let* ((loc (vec (vx (location farmer)) (vy (location farmer)) 0))
            (puff (make-instance 'puff
