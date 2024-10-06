@@ -47,7 +47,7 @@ part of the map."
   (enter *bugs* scene)
   (enter *puffs* scene)
   ;; (enter (make-instance 'display-controller) scene)
-  ;; (enter (start-level :level-1) scene)
+  (enter (start-level :level-1) scene)
   ;; Necessary to prevent a crash when spawning the first puff.
   (preload (make-instance 'bug-fly) scene)
   (preload (make-instance 'puff) scene)

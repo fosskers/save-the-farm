@@ -28,13 +28,13 @@
    (damage          :initform 1)))
 
 (defmethod min-x ((bug-fly bug-fly))
-  (- (vx (location bug-fly)) 2))
+  (- (vx (location bug-fly)) 3))
 (defmethod max-x ((bug-fly bug-fly))
-  (+ 7 (vx (location bug-fly))))
+  (+ 8 (vx (location bug-fly))))
 (defmethod min-y ((bug-fly bug-fly))
-  (- (vy (location bug-fly)) 7))
+  (- (vy (location bug-fly)) 8))
 (defmethod max-y ((bug-fly bug-fly))
-  (+ 6 (vy (location bug-fly))))
+  (+ 7 (vy (location bug-fly))))
 
 ;; --- Handlers --- ;;
 
