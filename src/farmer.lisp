@@ -76,7 +76,7 @@
 
 (defun shoot-puff (farmer)
   (when (not (stunned? farmer))
-    (let* ((loc (vec (+ 5 (vx (location farmer)))
+    (let* ((loc (vec (+ 6 (vx (location farmer)))
                      (vy (location farmer))
                      0))
            (puff (make-instance 'puff
