@@ -15,7 +15,7 @@
    (bug   :initarg :bug      :reader bug)
    (state :initform :pending :accessor state)
    (frame :initform nil      :accessor frame)
-   (spawn-interval :initarg :spawn-interval :reader spawn-interval))
+   (spawn-interval :initarg :spawn-interval :accessor spawn-interval))
   (:documentation "A game level in which bugs are spawned, usually lasting 20 seconds."))
 
 ;; --- Handlers --- ;;
@@ -38,7 +38,9 @@
          ;; (v:info :stf (format nil "Frame: ~a" fc))
          (enter bug *bugs*)
          (setf (location bug) loc)
-         (setf (movement-scheme bug) mov))))))
+         (setf (movement-scheme bug) mov)
+         (when (> (spawn-interval game-level) +framerate+)
+           (decf (spawn-interval game-level))))))))
 
 #+nil
 (observe! (slot-value *bugs* 'trial::%count) :title "Bugs")

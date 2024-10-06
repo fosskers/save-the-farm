@@ -71,7 +71,7 @@
 
 (defun maybe-shoot-puff (farmer fc)
   (when (and (retained 'shoot)
-             (zerop (mod fc 30)))
+             (zerop (mod fc 20)))
     (shoot-puff farmer)))
 
 (defun shoot-puff (farmer)
