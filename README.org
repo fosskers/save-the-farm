@@ -14,3 +14,8 @@ a high score!
 
 WASD to move, Spacebar to shoot, Enter to reset the game after a Game Over.
 Common gamepads also work.
+
+* Legal
+
+All code and assets for Save the Farm are licensed under the GPLv3, except for
+[[https://opengameart.org/content/flowerbed-fields-loop][the music]] that was created by Zane Little Music and is licensed under the CC0.
