@@ -25,6 +25,10 @@ part of the map."
       (enter post scene)
       (setf (location post) loc))))
 
+(defmethod stage :after ((scene scene) (area staging-area))
+  (stage (// 'farm 'bgm) area)
+  (harmony:play (// 'farm 'bgm) :repeat 3 :volume 0.75))
+
 (defmethod setup-scene ((main stf-main) scene)
   (setf *game-over* nil)
   (setf *crops* (make-instance 'bag))

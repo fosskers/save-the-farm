@@ -24,6 +24,7 @@
 (define-asset (farm post)       sprite-data #p"sprites/post.json")
 (define-asset (farm numbers)    sprite-data #p"sprites/numbers.json")
 (define-asset (farm tilemap)    tile-data   #p"map/field.tmj")
+(define-asset (farm bgm)        audio-file  #p"audio/flowerbed_fields.ogg")
 
 ;; --- Actions --- ;;
 

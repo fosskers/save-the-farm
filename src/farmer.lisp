@@ -43,7 +43,6 @@
   (let ((stunned-frame (stunned? farmer)))
     (cond ((and stunned-frame (> (- fc stunned-frame) +stun-timeout+))
            (setf (stunned? farmer) nil)
-           (play 'idle farmer)
            (move-farmer farmer)
            (maybe-shoot-puff farmer fc))
           ;; Case: The farmer is stunned and cannot move.
@@ -70,9 +69,12 @@
   (shoot-puff farmer))
 
 (defun maybe-shoot-puff (farmer fc)
-  (when (and (retained 'shoot)
-             (zerop (mod fc 20)))
-    (shoot-puff farmer)))
+  (cond ((and (retained 'shoot)
+              (zerop (mod fc 20)))
+         (play 'shooting farmer)
+         (shoot-puff farmer))
+        ((retained 'shoot) (play 'shooting farmer))
+        (t (play 'idle farmer))))
 
 (defun shoot-puff (farmer)
   (when (not (stunned? farmer))
