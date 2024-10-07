@@ -1,0 +1,16 @@
+#+title: Save the Farm '88
+
+[[file:stf.png]]
+
+#+begin_quote
+Save your crops from nasty bugs!
+#+end_quote
+
+/Save the Farm/ is a simple shooter game written to evaluate the [[https://shirakumo.github.io/trial/][Trial]] game engine
+for Common Lisp. The bugs eat your crops, and if they run out, you lose. Go for
+a high score!
+
+* Controls
+
+WASD to move, Spacebar to shoot, Enter to reset the game after a Game Over.
+Common gamepads also work.

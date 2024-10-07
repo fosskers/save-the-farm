@@ -19,4 +19,5 @@
          (button :one-of (:select)))
 
 (trigger start
-         (button :one-of (:start)))
+         (button :one-of (:start))
+         (key :one-of (:enter)))
