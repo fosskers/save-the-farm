@@ -10,6 +10,28 @@ Save your crops from nasty bugs!
 for Common Lisp. The bugs eat your crops, and if they run out, you lose. Go for
 a high score!
 
+* Building
+
+Building the game requires [[https://github.com/fukamachi/qlot][Qlot]], as this pins dependencies to their expected
+versions. To install all deps:
+
+#+begin_example
+qlot install
+#+end_example
+
+Then to run:
+
+#+begin_example
+qlot exec sbcl --dynamic-space-size 4GB
+#+end_example
+
+Then within the REPL:
+
+#+begin_example
+(asdf:load-system :save-the-farm)
+(save-the-farm:launch)
+#+end_example
+
 * Controls
 
 WASD to move, Spacebar to shoot, Enter to reset the game after a Game Over.
