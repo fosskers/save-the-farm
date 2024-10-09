@@ -7,8 +7,9 @@
   :initargs (:distribution "https://dist.shirakumo.org/shirakumo.txt" :%version :latest)
   :version "2024.10.01-19.36.28"))
 ("trial" .
- (:class qlot/source/local:source-local
-  :initargs (:path "/home/colin/code/common-lisp/trial")))
+ (:class qlot/source/github:source-github
+  :initargs (:repos "Shirakumo/trial" :ref "331e9957f6ab6f5dd901e42f0a66df2cf4793cba" :branch nil :tag nil)
+  :version "github-331e9957f6ab6f5dd901e42f0a66df2cf4793cba"))
 ("transducers" .
  (:class qlot/source/git:source-git
   :initargs (:remote-url "https://codeberg.org/fosskers/cl-transducers.git")

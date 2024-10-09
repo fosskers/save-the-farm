@@ -1,7 +1,10 @@
 dist http://dist.shirakumo.org/shirakumo.txt
 
 # A local Trial to fix a bug in the version available via the Shirakumo dist.
-local trial /home/colin/code/common-lisp/trial
+# local trial /home/colin/code/common-lisp/trial
+
+# The last commit in which Trial is Free Software.
+github trial Shirakumo/trial :ref 331e9957f6ab6f5dd901e42f0a66df2cf4793cba
 
 # Otherwise old version from Quicklisp is pulled.
 git transducers https://codeberg.org/fosskers/cl-transducers.git
